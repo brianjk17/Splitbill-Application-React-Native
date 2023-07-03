@@ -1,25 +1,115 @@
 import { View, Text, TouchableOpacity, Image, TextInput } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 // import { themeColors } from '../theme'
 import { SafeAreaView } from 'react-native-safe-area-context'
 // import {ArrowLeftIcon} from 'react-native-heroicons/solid';
 import { useNavigation } from '@react-navigation/native';
+import { supabase } from '../supabase-service';
 
 export default function SignUpScreen() {
     const navigation = useNavigation();
-    
     const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
+    // const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [confpassword, setConfpassword] = useState('');
+
+    function reset(){setName('')
+    setPhone('')
+    setPassword('')
+    setConfpassword('')}
+    // reset()
+
+    // useEffect(()=>{
+    //     setName('')
+    //     setPhone('')
+    //     setPassword('')
+    //     setConfpassword('')
+    // },[])
     
+    var errors = "";
+
+    async function checkAvailabilityPhone() {
+        const { data, error } = await supabase
+            .from('User')
+            .select()
+            .eq('phone', phone)
+
+        if (phone===""||phone.length<=8||!Number.isInteger(parseInt(phone))){
+            console.log("invalid phone input")
+            errors+="invalid phone input"
+        }
+        else if
+        (data?.length !== 0) {
+            console.log(data?.length)
+            console.log("sadf")
+            errors="Phone Number Already Used!"
+        }
+        else if (error) {
+            console.log(error)
+            // throw error;
+        } else {
+            console.log("Phone good")
+            return true
+        }
+        return false
+    }
+
+    async function checkPassword() {
+        if(password===""||confpassword===""||password.length<=5){
+            console.log("invalid password input or password too short")
+            errors="invalid password input or password too short"
+        } 
+        else if(password!=confpassword){
+            console.log("passwords different")
+            errors="passwords different"
+        }
+        else {
+            console.log("Password good")
+            return true
+        }
+        return false
+    }
+
+    async function userRegister() {
+        //check availability
+        if(name.length<=1){
+            errors+="Name empty\n"
+            console.log(errors)
+        }
+        if (name===''||!await checkAvailabilityPhone() || !await checkPassword()) {
+            console.log("invalid input(s)")
+            alert(errors)
+            errors=""
+            return;
+        }
+        const { error } = await supabase.from("User").insert({
+            name: name,
+            // email: email,
+            phone: phone,
+            password: password
+        })
+        if (error) {
+            //error will throw here
+            console.log("erererereor")
+            console.log(error)
+            // throw error;
+        }else{
+            console.log("user added")
+            reset()
+            navigation.navigate('Login')
+        }
+    }
+
     return (
     <View className="flex-1 flex bg-white" style={{backgroundColor: '#171717'}}>
+        
       <SafeAreaView className="flex">
         <View className="flex-row justify-start">
             <TouchableOpacity 
-                onPress={()=> navigation.goBack()}
+                onPress={()=> {
+                    reset()
+                    navigation.goBack()}}
                 className="bg-yellow-400 p-2 rounded-tr-2xl rounded-bl-2xl ml-4"
             >
                 <Text>Back</Text>
@@ -39,23 +129,24 @@ export default function SignUpScreen() {
             <TextInput
                 className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
                 value={name}
-                placeholder='John Snow'
+                placeholder='Enter Fullname'
                 onChangeText={value=>setName(value)}
             />
             
-            <Text className="text-gray-700 ml-4">Email Address</Text>
+            {/* <Text className="text-gray-700 ml-4">Email Address</Text>
             <TextInput
                 className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
                 value={email}
                 placeholder="john@gmail.com"
                 onChangeText={value=>setEmail(value)}
-            />
+            /> */}
 
             <Text className="text-gray-700 ml-4">Phone Number</Text>
             <TextInput
                 className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
+                keyboardType='numeric'
                 value={phone}
-                placeholder="Phone Number"
+                placeholder="Enter Phone Number"
                 onChangeText={value=>setPhone(value)}
             />
 
@@ -79,7 +170,8 @@ export default function SignUpScreen() {
 
             <TouchableOpacity 
                 className="py-3 bg-yellow-400 rounded-xl"
-                onPress={()=> navigation.navigate('Login')}
+                // onPress={()=> navigation.navigate('Login')}
+                onPress={()=>userRegister()}
             >
                 <Text className="font-xl font-bold text-center text-gray-700">
                     Sign Up
@@ -105,7 +197,9 @@ export default function SignUpScreen() {
         </View> */}
         <View className="flex-row justify-center mt-7">
             <Text className="text-gray-500 font-semibold">Already have an account?</Text>
-            <TouchableOpacity onPress={()=> navigation.navigate('Login')}>
+            <TouchableOpacity onPress={()=> {
+                reset()
+                navigation.navigate('Login')}}>
                 <Text className="font-semibold text-yellow-500"> Login</Text>
             </TouchableOpacity>
         </View>

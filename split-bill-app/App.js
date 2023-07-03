@@ -10,12 +10,14 @@
 // npm i tailwindcss -D
 // npx tailwindcss init
 
-//SUPABASE password
-// finalyearproject2023
+//SUPABASE
+//https://blog.logrocket.com/choosing-connecting-react-native-backend/#:~:text=You%20can%20use%20Supabase%20completely,the%20React%20Native%20development%20environment.
+// password: finalyearproject2023
+// yarn add @supabase/supabase-js   
 
 //APPNAV
-//yarn add @react-navigation/native
-//yarn add @react-navigation/native-stack
+// yarn add @react-navigation/native
+// yarn add @react-navigation/native-stack
 
 //expo install react-native-gesture-handler 
 //react-native-reanimated 
@@ -29,14 +31,39 @@
 
 //grey #171717
 //yellow #facc15, yellow-400
+//new yellow #FFE562
 //white #FBFBFB, stone-300
 
+//.env
+// $ npm install -D react-native-dotenv
+
+
+//SWIPE BUTTON
+// npm install rn-swipe-button --save
+
+//SWITCH SELECTOR
+// yarn add react-native-switch-selector
+
+//feather UI
+// npm install feather-icons
+
+/////////////USELESS/////////////
+
+//REACT NATIVE MATERIAL
+// yarn add @react-native-material/core
+
+//REACT NATIVE RAPI UI
+// npm install react-native-rapi-ui
+// expo install react-native-safe-area-context expo-font @expo/vector-icons expo-asset
+
 // import { TailwindProvider } from 'tailwindcss-react-native';
+// import AsyncStorage from "@react-native-async-storage/async-storage";
+///////////////////
 import { AuthNavigation } from "./navigation/AuthNavigation";
 
 export default function App() {
   return (
-        <AuthNavigation/>
+      <AuthNavigation/>
   );
 }
 
