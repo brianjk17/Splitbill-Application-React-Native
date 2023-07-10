@@ -1,59 +1,92 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, ScrollView, Alert } from 'react-native';
 import { supabase } from '../../../supabase-service';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
-//REMOVE CONTACT
-//Somehow get the Contacts id and delete it 
-async function removeFriend(userId, friendId) {
-    const { data: userData, error: userError } = await supabase
-      .from('friendship')
-      .delete()
-      .eq('user_id', userId)
-      .eq('friend_id', friendId);
-  
-    const { data: friendData, error: friendError } = await supabase
-      .from('friendship')
-      .delete()
-      .eq('user_id', friendId)
-      .eq('friend_id', userId);
-  
-    if (userError || friendError) {
-      console.error('Error removing friend:', userError || friendError);
-      return false;
-    }
-  
-    return true;
-  }
-/////////////////////////////////////////////////////////////////////////////
-
-export default ContactCard = () => {
-  // const [isSelected, setIsSelected] = useState(false);
+export default ContactCard = ({setIsLoading, loading}) => {
 
   //GET USER_ID FROM ASYNCSTORAGE
   // const [user_id, setUser_id] = useState(0);
+  const [contacts, setContacts] = useState([])
+  // const [contacts, update] = useState("")
+  const [isLoading1, setIsLoading1] = useState(true);
 
-  //GET CONTACTS FROM SUPABASE
-  const [contacts, setContacts] = useState([]);
-
-  const handleSelect = () => {
+  const handleSelect = (friendId,name,phone) => {
     console.log("card tapped")
-    //give option to delete
+    console.log("hah",isLoading1)
+    let text='Do you want to delete '+name+"'s contact?\n"+phone;
+    Alert.alert(
+        'Confirmation',
+        text,
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+            onPress: () => {setIsLoading(false)}
+          },
+          {
+            text: 'Delete',
+            onPress: () => {
+              console.log("Delete User")
+              setIsLoading1(!isLoading1)
+              console.log(loading)
+              deleteContact(friendId)
+              fetchData()
+            },
+          },
+        ],
+        { cancelable: false }
+      );
+    console.log(loading)
+    setIsLoading(!loading)
+    fetchData()
   };
+
+  const [currentPhone, setCurrentPhone] = useState('');
+  const [currentUser_id, setCurrentUser_id] = useState('');
 
   const getUser_id = async () => {
     try {
-        const isUser_id = await AsyncStorage.getItem('user_id');
-        // const isUser_id = await AsyncStorage.getItem('isLoggedIn');
-        console.log("isUser_id: "+isUser_id)
-        // setUser_id(isUser_id)
-        return isUser_id
+        const currentPhone = await AsyncStorage.getItem('phone');
+        const currentUser_id = await AsyncStorage.getItem('user_id');
+        // console.log("getUser_id")
+        // console.log(currentPhone)
+        // console.log(currentUser_id)
+        setCurrentPhone(currentPhone.toString())
+        setCurrentUser_id(currentUser_id.toString())
+        return 
     } catch (error) {
         console.log('Error retrieving login status: ', error);
         return false; // Default value in case of error
     }
   };
 
+  async function deleteContact(friendId){
+    setIsLoading(false)
+    const { data:data1, error:error1 } = await supabase
+      .from('Contacts')
+      .delete()
+      .eq('user_id', friendId)
+      .eq('friend_id', currentUser_id);
+    const { data:data2, error:error2 } = await supabase
+      .from('Contacts')
+      .delete()
+      .eq('user_id', currentUser_id)
+      .eq('friend_id', friendId );
+    // console.log("deleteContact")
+    // console.log(data1)
+    // console.log(data2)
+    if (error1||error2) {
+      console.error('Error removing friend:', error1 || error2);
+      alert("Delete failed, please try again")
+    } else{
+      setIsLoading(!loading)
+      alert("Delete successful")
+      await fetchData()
+    }
+    setIsLoading(!loading)
+    await fetchData()
+  }
   // GET CONTACT
   async function getContacts(userId) {
     userId=parseInt(userId)
@@ -102,7 +135,7 @@ export default ContactCard = () => {
         if (error) {
           console.error('Error fetching contacts:', error);
         }else if(data===undefined||data.length===0){
-          return newData
+          // return newData
         } 
         else {
           // newData = data.map(obj => obj.friend_id);
@@ -110,7 +143,6 @@ export default ContactCard = () => {
           console.log(newData)
           setContacts(newData);
           return newData
-
         }
       } catch (error) {
         console.error('Error fetching contacts:', error);
@@ -147,93 +179,102 @@ export default ContactCard = () => {
   //   }
   //   fetchData();
   // },[])
+  
+  const fetchData = async () => {
+    try {
+      const isUser_id = await AsyncStorage.getItem('user_id');
+      // const isUser_id = await AsyncStorage.getItem('isLoggedIn');
+      console.log("isUser_id: "+isUser_id)
+      console.log(parseInt(isUser_id))
+
+      // setUser_id(parseInt(isUser_id))
+
+      let newData=[]
+
+      const { data: firstData, error: firstError } = await supabase
+      .from('Contacts')
+      .select(`
+        User!Contacts_friend_id_fkey(
+        user_id,
+        name,
+        phone
+        )  
+      `)
+      .eq('user_id', parseInt(isUser_id));
+
+    if (firstError) {
+      console.error('Error fetching 1st contacts:', firstError);
+      return firstError;
+    } else if (firstData === undefined || firstData.length === 0) {
+      console.log("1st: " + firstData);
+    } else {
+      newData = [...newData, ...firstData];
+    }
+
+    console.log(newData);
+
+    const { data: secondData, error: secondError } = await supabase
+      .from('Contacts')
+      .select(`
+        User!Contacts_user_id_fkey(
+        user_id,
+        name,
+        phone
+        )  
+      `)
+      .eq('friend_id', parseInt(isUser_id));
+
+    if (secondError) {
+      console.error('Error fetching 2nd contacts:', secondError);
+      return secondError;
+    } else if (secondData === undefined || secondData.length === 0) {
+      console.log("2nd: " + secondData);
+    } else {
+      newData = [...newData, ...secondData];
+      console.log(newData);
+    }
+    setContacts(newData);
+    setIsLoading(false);
+    } catch (error) {
+      // console.log(isUser_id)
+      console.log('Error retrieving login status: ', error);
+      return false; // Default value in case of error
+    }
+  }
+  useEffect(()=>{
+    getUser_id()
+    fetchData()
+  },[loading])
 
   useEffect(()=>{
-    const fetchData = async () => {
-      try {
-        const isUser_id = await AsyncStorage.getItem('user_id');
-        // const isUser_id = await AsyncStorage.getItem('isLoggedIn');
-        console.log("isUser_id: "+isUser_id)
-        console.log(typeof(isUser_id))
-        console.log(parseInt(isUser_id))
-
-        // setUser_id(parseInt(isUser_id))
-
-        let newData=[]
-
-        const { data: firstData, error: firstError } = await supabase
-        .from('Contacts')
-        .select(`
-          User!Contacts_friend_id_fkey(
-          user_id,
-          name,
-          phone
-          )  
-        `)
-        .eq('user_id', parseInt(isUser_id));
-
-      if (firstError) {
-        console.error('Error fetching 1st contacts:', firstError);
-        return firstError;
-      } else if (firstData === undefined || firstData.length === 0) {
-        console.log("1st: " + firstData);
-      } else {
-        newData = [...newData, ...firstData];
-      }
-
-      console.log(newData);
-
-      const { data: secondData, error: secondError } = await supabase
-        .from('Contacts')
-        .select(`
-          User!Contacts_user_id_fkey(
-          user_id,
-          name,
-          phone
-          )  
-        `)
-        .eq('friend_id', parseInt(isUser_id));
-
-      if (secondError) {
-        console.error('Error fetching 2nd contacts:', secondError);
-        return secondError;
-      } else if (secondData === undefined || secondData.length === 0) {
-        console.log("2nd: " + secondData);
-      } else {
-        newData = [...newData, ...secondData];
-        console.log(newData);
-      }
-        setContacts(newData);
-      } catch (error) {
-        // console.log(isUser_id)
-        console.log('Error retrieving login status: ', error);
-        return false; // Default value in case of error
-      }
-    }
+    getUser_id()
     fetchData()
-    
-    //LOADING SET DONE
-  },[])
+  },[isLoading1])
 
-  // function contactcard(){
-  //   return(
-  //     <TouchableOpacity
-  //     style={[styles.cardContainer]}//, isSelected && styles.selectedCard]}
-  //     onPress={handleSelect}
-  //   >
-  //     <View style={styles.circleContainer}>
-  //       <Text style={styles.initial}>{user.name.charAt(0)}</Text>
-  //     </View>
-  //     <View style={styles.userInfoContainer}>
-  //       <Text style={styles.name}>{user.name}</Text>
-  //       <Text style={styles.phoneNumber}>{user.phoneNumber}</Text>
-  //     </View>
-  //   </TouchableOpacity>
-  // )}
+  function Contactcard({data}){
+    console.log(data)
+    return(
+      <ScrollView style={{ flex: 1 }}>
+      {data.map((item) => (
+        <React.Fragment key={item.User.user_id}>
+          <TouchableOpacity style={styles.cardContainer} onPress={()=>handleSelect(item.User.user_id,item.User.name,item.User.phone)}>
+            <View style={styles.circleContainer}>
+              <Text style={styles.initial}>{item.User.name.charAt(0)}</Text>
+            </View>
+            <View style={styles.userInfoContainer}>
+              <Text style={styles.name}>{item.User.name}</Text>
+              <Text style={styles.phoneNumber}>{item.User.phone}</Text>
+            </View>
+          </TouchableOpacity>
+        </React.Fragment>
+      ))}
+    </ScrollView>
+    )
+  }
 
-  return (<>
-    {contacts.map((item)=>(
-      <TouchableOpacity
+  function renderList(item){
+    return(
+    <TouchableOpacity
         key={item.User.user_id}
         style={[styles.cardContainer]}//, isSelected && styles.selectedCard]}
         onPress={handleSelect}
@@ -246,8 +287,22 @@ export default ContactCard = () => {
           <Text style={styles.phoneNumber}>{item.User.phone}</Text>
         </View>
       </TouchableOpacity>
-    ))}
-   </>);
+    )
+  }
+
+  return (
+  //   <View className="flex-1 items-center py-1">
+  //     <FlatList
+  //       data={contacts}
+  //       // showsHorizontalScrollIndicator={false}
+  //       renderItem={({item})=>renderList(item)}
+  //       keyExtractor={(item) => item.User.phone}
+  //       keyboardShouldPersistTaps="always"
+  //       // contentContainerStyle={{ paddingBottom: 115 }}
+  //     />
+  //  </View>
+  <Contactcard data={contacts}/>
+  );
 };
 // Dev Tools Web UI has been removed. Learn more: https://blog.expo.dev/sunsetting-the-web-ui-for-expo-cli-ab12936d2206
 const styles = StyleSheet.create({
@@ -255,10 +310,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
-    borderWidth: 1,
+
+    borderWidth: 2,
     borderColor: '#ccc',
-    borderRadius: 8,
-    marginBottom: 10,
+    borderRadius: 30,
+    // marginBottom: 10,
+    marginVertical:6,
+    backgroundColor: '#FFE562'
   },
   selectedCard: {
     backgroundColor: '#f0f0f0',

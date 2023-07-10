@@ -92,64 +92,73 @@ export default function LoginScreen() {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [user_id, setUser_id] = useState(0);
+  const [user, setUser] = useState(null);
 
-  const storeLoginStatus = async (isLoggedIn) => {
+  const [name, setName] = useState('');
+
+  const storeLoginStatus = async (isLoggedIn, user_id, name, phone) => {
     try {
       console.log("aaaaa:"+user_id)
       await AsyncStorage.setItem('isLoggedIn', isLoggedIn.toString());
       await AsyncStorage.setItem('user_id', user_id.toString());
-      console.log("1aaaaa:"+user_id)
-      console.log('Login status stored successfully.');
+
+      await AsyncStorage.setItem('name',name.toString())
+      await AsyncStorage.setItem('phone', phone.toString())
+
+      console.log("user_id:"+user_id)
+      console.log("name:"+name.toString())
+      console.log("phone:"+phone.toString())
+      
+      console.log('Login AsyncStorage stored successfully.');
     } catch (error) {
       console.log('Error storing login status: ', error);
     }
   };
 
+  // WHEN LOG OUT
+  // remove isLoggedIn, user_id
   async function userLogin() {
-    
     //PASSWORD SYMMETRIC CRYPTOGRAPHY
     if(phone=="" || password==""){
-      navigation.navigate('Nav')//DELETE
+      navigation.navigate('Nav')                      //DELETE
       alert("Empty input(s) phone number or password")
       return
     }
     
-    try{
+    try {
       const { data, error } = await supabase
-            .from('User')
-            .select()
-            .eq('phone', phone)
-            .eq('password', password)
-
-      if (data[0]===undefined){
-        console.log(error)
-        alert("Incorrect phone number or password")
+        .from('User')
+        .select()
+        .eq('phone', phone)
+        .eq('password', password);
+  
+      if (data[0] === undefined) {
+        console.log(error);
+        alert('Incorrect phone number or password');
       } else if (data?.length !== 0) {
-        // console.log(data)
-        setUser_id(data[0].user_id)
-        console.log("data[0].user_id: "+data[0].user_id)
-        console.log(user_id)
-        
-        console.log("Login success")
-        storeLoginStatus(true);
-        // setPhone('')
-        // setPassword('')
-        console.log(user_id)
-        // navigation.navigate('Nav')
-      } else{
-        console.log(error)
-        console.log(phone,password)
+        setUser_id(data[0].user_id);
+        setName(data[0].name);
+  
+        console.log('data[0].user_id: ' + data[0].user_id);
+        console.log(user_id);
+        console.log(data[0]);
+        console.log('Login success');
+        storeLoginStatus(true, data[0].user_id, data[0].name, phone);
+        console.log(user_id);
+      } else {
+        console.log(error);
+        console.log(phone, password);
       }
-    }catch (error) {
+    } catch (error) {
       console.log('Error storing login status: ', error);
     }
   }
 
-  useEffect(() => {
-    if (user_id > 0) {
-      storeLoginStatus(true);
-    }
-  }, [user_id]);
+  // useEffect(() => {
+  //   if (user_id > 0) {
+  //     storeLoginStatus(true);
+  //   }
+  // }, [user_id]);
 
 
   return (
@@ -195,9 +204,9 @@ export default function LoginScreen() {
               onChangeText={value=>setPassword(value)}
             />
 
-            <TouchableOpacity className="flex items-end">
+            {/* <TouchableOpacity className="flex items-end">
               <Text className="text-gray-700 mb-5">Forgot Password?</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <TouchableOpacity 
               className="py-3 bg-yellow-400 rounded-xl"

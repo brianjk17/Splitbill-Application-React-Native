@@ -9,6 +9,10 @@ export default function SwitchSelectorButton({changetype}){
         { label: "Add from contacts", value: "contacts" },
         { label: "Add member", value: "member" }
     ];
+
+    const handlePageChange = (value) => {
+        changetype(value);
+    };
     return (
     <View className="pb-3">
         <SafeAreaView>
@@ -23,7 +27,7 @@ export default function SwitchSelectorButton({changetype}){
             <SwitchSelector
             options={switchoptions}
             initial={0}
-            onPress={changetype}
+            onPress={handlePageChange}
             textColor="black"
             selectedColor="black"
             buttonColor="yellow"

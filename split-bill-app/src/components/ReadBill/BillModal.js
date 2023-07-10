@@ -4,9 +4,11 @@ import { View, Text } from 'react-native';
 const Card = ({ cardNumber, phoneNumber, items }) => {
   return (
     <View style={styles.card}>
-      <Text style={styles.title}>{`Card ${cardNumber}: ${phoneNumber} bought`}</Text>
+      <Text style={styles.title}>{`${phoneNumber} bought`}</Text>
       {items.length > 0 ? (
         items.map((item, index) => (
+            //display name of expense and the cost for each person
+            //price per person is price divide members.length
           <Text key={index} style={styles.subtitle}>
             {item}
           </Text>
@@ -19,6 +21,7 @@ const Card = ({ cardNumber, phoneNumber, items }) => {
 };
 
 const MyComponent = () => {
+    //Expenses
   const data = [
     {
       id: 1,

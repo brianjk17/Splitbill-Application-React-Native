@@ -7,18 +7,28 @@ const ModifyExpenseModal = ({ onSaveExpense, closeModal, expense }) => {
   const [expenseQuantity, setExpenseQuantity] = useState('');
 
   const handleAddExpense = () => {
-    // console.log(expense)
-    // console.log(expense.id)
-    
     console.log("handleAddExpense")
     if(expenseName===''||expensePrice===''||expenseQuantity===''){
       alert("Please input all the fields")
+    }else if(expensePrice==="0."||parseFloat(expensePrice)===0||expenseQuantity==="0"){
+      alert("Please price can't be 0")
     }
     else{
+        function format(inputString){
+          if (inputString.endsWith('.')) {
+            return inputString + '00';
+          } else if (inputString.includes('.')) {
+            return inputString;
+          } else {
+            return inputString + '.00';
+          }
+        }
+        const adjustedText= format(expensePrice)
+        setExpensePrice(adjustedText) 
         const updatedexpense = {
             id: expense.id,
             name: expenseName,
-            price: expensePrice,
+            price: adjustedText,
             quantity: expenseQuantity,
             //Store phonenumbers
             members:expense.members
@@ -27,11 +37,36 @@ const ModifyExpenseModal = ({ onSaveExpense, closeModal, expense }) => {
           onSaveExpense(expense.id, updatedexpense);
           closeModal();
     }
-    
+  };
 
+  const handlePriceChange = (text) => {
+    // Remove any non-numeric characters from the input
+    const filteredText = text.replace(/[^0-9.]/g, '');
+
+    // Check if the first character is a decimal point
+    if (filteredText.startsWith('.')) {
+      // Discard the input if it starts with a decimal point
+      return;// Make sure only one decimal point exists
+    }
+    
+    const decimalCount = filteredText.split('.').length - 1;
+    if (decimalCount > 1) {
+      // More than one decimal point present, discard the new one
+      return;
+    }
+
+    // const adjustedText = filteredText.endsWith('.') ? filteredText + '0' : filteredText;
+
+    setExpensePrice(filteredText);
+  };
+  const handleQuantityChange = (text) => {
+    // Remove any non-numeric characters from the input
+    const filteredText = text.replace(/[^1-9]/g, '');
+    setExpenseQuantity(filteredText);
   };
 
   useEffect(()=>{
+    console.log(expense)
     setExpenseName(expense.name)
     setExpensePrice(expense.price)
     setExpenseQuantity(expense.quantity)
@@ -50,14 +85,14 @@ const ModifyExpenseModal = ({ onSaveExpense, closeModal, expense }) => {
       <TextInput
         placeholder="Expense Price"
         value={expensePrice}
-        onChangeText={setExpensePrice}
-        keyboardType="numeric"
+        onChangeText={handlePriceChange}
+        keyboardType="decimal-pad"
         className="border border-gray-400 rounded p-2 mb-2"
       />
       <TextInput
         placeholder="Expense Quantity"
         value={expenseQuantity}
-        onChangeText={setExpenseQuantity}
+        onChangeText={handleQuantityChange}
         keyboardType="numeric"
         className="border border-gray-400 rounded p-2 mb-2"
       />

@@ -1,6 +1,8 @@
 import { View,Text,FlatList,TouchableOpacity,SafeAreaView } from "react-native"
 import BillCard from "../components/BillCard"
 import { useEffect, useState } from "react";
+import { Modal } from "react-native";
+import ExpenseScreen from "./ExpenseScreen";
 
 export default function BillScreen(){
   const[billList, setBillList]=useState([
@@ -24,11 +26,19 @@ export default function BillScreen(){
       //render the BillCard component
       
   })
-  
+  const [billModal, setbillModal] = useState(false)
+  function toggleBillModal(){
+    setbillModal(!billModal)
+  }
   function renderList(billItem){
     console.log(billItem)
     return(
       <View className="items-center py-1">
+
+        <Modal animationType="fade" visible={billModal} onRequestClose={toggleBillModal}>
+          {/* <BillModal closeModal={toggleModifyModal} expense={selectedExpense} onSaveExpense={saveExpense}/> */}
+        </Modal>
+
         <BillCard 
           // name="Electricity Bill" 
           // amount="$100" 
@@ -43,24 +53,34 @@ export default function BillScreen(){
   
   const handleCardPress = () => {
     alert('Card clicked!');
-
+    toggleBillModal()
   };
 
-  newbill={name:"Food C", total:40, number:6,billID:4}
+  // newbill={name:"Food C", total:40, number:6,billID:4}
 
-  const addNewBill = (newbill) => {
-    //MODAL BILL for user to ADD NEW BILL
+  // const addNewBill = (newbill) => {
+  //   //MODAL BILL for user to ADD NEW BILL
 
-    setBillList([...billList, newbill])
-    console.log(billList)
-  };
+  //   setBillList([...billList, newbill])
+  //   console.log(billList)
+  // };
+
   
+
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const toggleExpenseModal = () => {
+    console.log(isModalVisible)
+    setModalVisible(!isModalVisible);
+  };
+
   return(
     <SafeAreaView className="flex-1">
       {/* <View className="flex-1"> */}
         <Text className="pt-3">This is Bill Screen</Text>
       
         <View className="flex-1 items-center py-1">
+
           <FlatList
                 data={billList}
                 // showsHorizontalScrollIndicator={false}
@@ -68,13 +88,21 @@ export default function BillScreen(){
                 keyExtractor={(item) => item.billID}
                 keyboardShouldPersistTaps="always"
                 contentContainerStyle={{ paddingBottom: 115 }}
-              />
-              <TouchableOpacity
-          className="bg-blue-500 p-4 rounded-full shadow-lg items-center justify-center absolute bottom-11 right-0 m-4"
-          onPress={()=>addNewBill(newbill)}>
+          />
+        
+          <TouchableOpacity
+            className="bg-blue-500 p-4 rounded-full shadow-lg items-center justify-center absolute bottom-11 right-0 m-4"
+            onPress={()=>toggleExpenseModal()}>
+            <Text Text className="text-white text-lg font-bold">Add Bill</Text>
+          </TouchableOpacity>
 
-          <Text className="text-white text-lg font-bold">Add Bill</Text>
-        </TouchableOpacity>
+          <Modal
+            animationType="fade" 
+            visible={isModalVisible} 
+            onRequestClose={toggleExpenseModal}
+          >
+            <ExpenseScreen toggleExpenseModal={toggleExpenseModal}/>
+          </Modal>
         </View>
       {/* </View> */}
     </SafeAreaView>
