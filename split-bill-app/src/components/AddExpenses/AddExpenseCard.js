@@ -10,7 +10,13 @@ const ExpenseCard = ({ expense, onDelete, onModify, assignExpense, selectedUsers
       };
 
     return (
-        <View>
+        <View 
+        className="bg-[#FFFFFF]"
+            style={{
+            borderRadius: 30,
+            paddingBottom: 10,
+            padding:10
+        }}>
             <TouchableOpacity
                 onPress={()=>assignExpense(expense.id)}
                 className="bg-[#FFFFFF] mt-3"
@@ -19,13 +25,13 @@ const ExpenseCard = ({ expense, onDelete, onModify, assignExpense, selectedUsers
                     borderRadius: 30,
                     // justifyContent: 'center',
                     // alignItems: 'center',
-                    padding: 10,
+                    paddingLeft: 10,
                 }}
             >
                 {/* <Text className="text-lg font-bold">ID: {expense.id}</Text> */}
                 <Text className="text-lg font-bold">Name: {expense.name}</Text>
                 <Text>Total Price: RM {expense.price}</Text>
-                <Text>Price per item: RM {parseFloat(expense.price)/parseFloat(expense.quantity)}</Text>
+                <Text>Price per item: RM {(parseFloat(expense.price)/parseFloat(expense.quantity)).toFixed(2)}</Text>
                 <Text>Quantity: {expense.quantity}</Text>
                 <Text>Members:</Text>
                 {expense.members.map((member) => (
@@ -33,7 +39,6 @@ const ExpenseCard = ({ expense, onDelete, onModify, assignExpense, selectedUsers
                 ))}
             </TouchableOpacity>
 
-            {/* <Button title="Modify" onPress={handleOpenModal} className="bg-blue-500 text-white py-2 px-4 rounded mt-2" /> */}
             <TouchableOpacity  onPress={handleOpenModal} 
                 className="bg-blue-500 mb-3 mt-3" 
                 style={{
@@ -47,7 +52,6 @@ const ExpenseCard = ({ expense, onDelete, onModify, assignExpense, selectedUsers
                 <Text className="text-lg font-bold text-white">Modify</Text>
             </TouchableOpacity>
 
-            {/* <Button title="Delete" onPress={onDelete} className="bg-red-500 text-white py-2 px-4 rounded mt-2" /> */}
             <TouchableOpacity title="Delete" onPress={onDelete} 
                 className="bg-red-500" 
                 style={{

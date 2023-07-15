@@ -9,6 +9,8 @@ import SwipeButtonScreen from "../components/SwipeButton";
 // import { TextInput } from "@react-native-material/core";
 import AddExpenseComponent from "../components/AddExpenses/AddExpenseComponent";
 import { TouchableOpacity } from "react-native";
+import EvenlySwipeButton from "../components/EvenlySwipeButton";
+import SwitchSelector from "react-native-switch-selector";
 
 
 export default function ExpenseScreen({toggleExpenseModal}){
@@ -216,14 +218,14 @@ export default function ExpenseScreen({toggleExpenseModal}){
     // check if the prevMembersData[] and the members[] have been deleted or not //DELETED
     
     function updateArrays(){
-      console.log("prevMembersData")
-      console.log(prevMembersData)
+      // console.log("prevMembersData")
+      // console.log(prevMembersData)
 
-      console.log("selectedusers")
-      console.log(selectedUsers)
+      // console.log("selectedusers")
+      // console.log(selectedUsers)
 
-      console.log("nonUser")
-      console.log(nonUser)
+      // console.log("nonUser")
+      // console.log(nonUser)
 
       //REMOVE
       const removedObjects = prevMembersData.filter((obj1) => !nonUser.some((obj2) => obj2.User.nonUserId === obj1.User.nonUserId));
@@ -482,25 +484,74 @@ export default function ExpenseScreen({toggleExpenseModal}){
     setExpenses(updatedExpenses)
     console.log(expenses)
   };
+  //IN Number
+  const [taxValueNumber, setTaxValueNumber] = useState("");
+  const [serviceValueNumber, setServiceValueNumber] = useState("");
+  const [discountsValueNumber, setDiscountsValueNumber] = useState("");
 
-
-  //IN PERCENTAGE
-  const [taxValue, setTaxValue] = useState("");
-  const [serviceValue, setServiceValue] = useState("");
-  const [discountsValue, setDiscountsValue] = useState("");
-  
-  const handleTaxInputChange = (text) => {
+  // const [total, setTotal] = useState(0)
+  function getTotal(){
+    let totalBill=0
+    expenses.forEach(expense=>{
+      totalBill+=parseInt(expense.price)
+    })
+    return totalBill
+  }
+  const handleTaxInputNumberChange = (text) => {
     const filteredText = text.replace(/[^0-9.]/g, '');
-
     if (filteredText.startsWith('.')) {
-      return;
+      return;// Make sure only one decimal point exists
     }
-
     const decimalCount = filteredText.split('.').length - 1;
     if (decimalCount > 1) {
       return;
     }
 
+    setTaxValueNumber(filteredText);
+    setTaxValue((parseFloat(filteredText)/getTotal())*100)
+  };
+
+  const handleServiceInputNumberChange = (text) => {
+    const filteredText = text.replace(/[^0-9.]/g, '');
+    if (filteredText.startsWith('.')) {
+      return;// Make sure only one decimal point exists
+    }
+    const decimalCount = filteredText.split('.').length - 1;
+    if (decimalCount > 1) {
+      return;
+    }
+    setServiceValueNumber(filteredText);
+    setServiceValue((parseFloat(filteredText)/getTotal())*100)
+  };
+
+  const handleDiscountsInputNumberChange = (text) => {
+    const filteredText = text.replace(/[^0-9.]/g, '');
+    if (filteredText.startsWith('.')) {
+      return;// Make sure only one decimal point exists
+    }
+    const decimalCount = filteredText.split('.').length - 1;
+    if (decimalCount > 1) {
+      return;
+    }
+    setDiscountsValueNumber(filteredText);
+    setDiscountsValue((parseFloat(filteredText)/getTotal())*100)
+  };
+
+  
+  //IN PERCENTAGE
+  const [taxValue, setTaxValue] = useState("");
+  const [serviceValue, setServiceValue] = useState("");
+  const [discountsValue, setDiscountsValue] = useState("");
+
+  const handleTaxInputChange = (text) => {
+    const filteredText = text.replace(/[^0-9.]/g, '');
+    if (filteredText.startsWith('.')) {
+      return;
+    }
+    const decimalCount = filteredText.split('.').length - 1;
+    if (decimalCount > 1) {
+      return;
+    }
     setTaxValue(filteredText);
     // onValuesChange({ taxValue: filteredText, serviceValue, discountsValue });
   };
@@ -537,6 +588,7 @@ export default function ExpenseScreen({toggleExpenseModal}){
     // onValuesChange({ taxValue, serviceValue, discountsValue: filteredText });
   };
   
+
 
   useEffect(()=>{
       const fetchData = async () => {
@@ -723,6 +775,7 @@ export default function ExpenseScreen({toggleExpenseModal}){
           discount: check(discountsValue),
           expenses: expenses,
           members: selectedUsers,
+          paid: false,
         })
         if (error) {
             //error will throw here
@@ -757,6 +810,7 @@ export default function ExpenseScreen({toggleExpenseModal}){
               alert("Bill succefully created")
               //OPEN RESULT MODAL
               //CLOSE EXPENSE SCREEN MODAL
+              toggleExpenseModal()
             },
           },
         ],
@@ -784,11 +838,141 @@ export default function ExpenseScreen({toggleExpenseModal}){
         { cancelable: false }
       );
   }
-  
+
+  // function setExpensesEvenly(){
+  //   //get all members phonenumber in an array
+  //   let phoneMembers=[]
+  //   for (let i = 0; i < selectedUsers.length; i++) {
+  //     phoneMembers.push(selectedUsers[i].User.phone);
+  //   }
+
+  //   //assign all users to all the expenses
+  //   for (let i = 0; i < expenses.length; i++) {
+  //     expenses[i].members = phoneMembers;
+  //   }
+  // }
+  function evenlySplit(){
+    console.log("Evenly confirm Bill")
+    if(billName.length===0){
+      alert("Please give the bill name")
+    } else if(selectedUsers.length===1){
+      alert("The split bill must have more than 1 person")
+    } else if(expenses.length===0){
+      alert("No expenses added yet")
+    } else if(billOwner===null){
+      alert("Please set the bill owner")
+    } else if(taxValue>100||serviceValue>100||discountsValue>100){
+      alert("The tax or service or discounts couldn't exceed 100%")
+    }
+    //const decimalValue = parseFloat(filteredText);
+    //check if selected users only 1 meaning,. only himself
+    //check bill owner
+    //check if all the members of the bill has an expense
+    //check if all expense has a member
+    //check the optional inputs, check if all optional input is less than 100% or an invalid input
+    else{
+      console.log("CONFIRM BILL TO BE SPLITTED")
+      console.log(billName)
+      console.log(selectedUsers)
+      console.log(expenses)
+      console.log(billOwner)
+      console.log(taxValue)
+      console.log(serviceValue)
+      console.log(discountsValue)
+
+      let phoneMembers=[]
+      for (let i = 0; i < selectedUsers.length; i++) {
+        phoneMembers.push(selectedUsers[i].User.phone);
+      }
+
+      //assign all users to all the expenses
+      for (let i = 0; i < expenses.length; i++) {
+        expenses[i].members = phoneMembers;
+      }
+
+      function check(value){
+        if(value.length<1||parseInt(value)<1){
+          return 0
+        }else{
+          return parseInt(value)
+        }
+      }
+
+      async function addintoDB(){
+        JSON.stringify(expenses)
+        const { error } = await supabase
+        .from('Bill')
+        .insert({
+          payee_phone:billOwner,//phone
+          bill_name: billName,
+          tax: check(taxValue),
+          service: check(serviceValue),
+          discount: check(discountsValue),
+          expenses: expenses,
+          members: selectedUsers,
+          paid: false,
+        })
+        if (error) {
+            //error will throw here
+            console.log("erererereor")
+            console.log(error)
+            // throw error;
+            alert("Failed to add Bill, please try again")
+        }else{
+            console.log("Bill added")
+        }
+      }
+
+      Alert.alert(
+        'Confirmation',
+        'Are you sure you want to proceed?',
+        [
+          {
+            text: 'Cancel',
+            // style: 'cancel',
+            onPress: () => {
+              console.log("Canceled")
+            },
+          },
+          {
+            text: 'OK',
+            onPress: () => {
+              //STORE TO SUPABASE
+              console.log('Confirmed');
+              
+              addintoDB()
+
+              alert("Bill succefully created")
+              //OPEN RESULT MODAL
+              //CLOSE EXPENSE SCREEN MODAL
+              toggleExpenseModal()
+            },
+          },
+        ],
+        { cancelable: false }
+      );
+    }
+  }
+  const [billStatus, setBillStatus] = useState('expense');
+  const handleSwitchChange = (value) => {
+    setBillStatus(value);
+  };
+
+  const [optionalInput, setOptionalInput] = useState('percent')
+  const handleOptionalChange = (value) => {
+    setOptionalInput(value);
+    setTaxValueNumber('')
+    setServiceValueNumber('')
+    setDiscountsValueNumber('')
+    setTaxValue('')
+    setServiceValue('')
+    setDiscountsValue('')
+  };
+
   return(
     <KeyboardAvoidingView behavior="none" style={{ flex: 1 }}>
 
-      <ScrollView className="flex-1 bg-white ">
+      <ScrollView className="flex-1 " style={{backgroundColor:"#EDEDED"}}>
         <View className="flex-1 ">
 
             <TouchableOpacity
@@ -858,49 +1042,169 @@ export default function ExpenseScreen({toggleExpenseModal}){
               selectedUsers={selectedUsers}
             />
 
+               
+
+
             <View className="bg-[#A6A6A6] rounded-2xl px-4 py-3 mt-6 mx-3 ">
-              {/* INPUT TAX */}
-              <View style={styles.inputContainer}>
-                <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 0 }}>Tax (%):             </Text>
-                  <TextInput
-                    className="p-4 bg-white text-gray-700 rounded-2xl w-40 ml-1"
-                    style={{ fontSize: 15, fontWeight: 'bold'}}
-                    value={taxValue}
-                    // onChangeText={handleTaxInputChange}
-                    onChangeText={value=>handleTaxInputChange(value)}
-                    keyboardType="numeric"
-                  />
-              </View>
-              {/* INPUT SERVICES */}
-              <View style={styles.inputContainer}>
-                <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 0 }}>Service (%):      </Text>
-                  <TextInput
-                    className="p-4 bg-white text-gray-700 rounded-2xl w-40 ml-1"
-                    style={{ fontSize: 15, fontWeight: 'bold'}}
-                    value={serviceValue}
-                    // onChangeText={handleServiceInputChange}
-                    onChangeText={value=>handleServiceInputChange(value)}
-                    keyboardType="numeric"
-                  />
-              </View>
-              {/* INPUT DISCOUNTS */}
-              <View style={styles.inputContainer}>
-                <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 0 }}>Discounts (%): </Text>
-                  <TextInput
-                    className="p-4 bg-white text-gray-700 rounded-2xl w-40 ml-1"
-                    style={{ fontSize: 15, fontWeight: 'bold'}}
-                    value={discountsValue}
-                    // onChangeText={handleDiscountsInputChange}
-                    onChangeText={value=>handleDiscountsInputChange(value)}
-                    keyboardType="numeric"
-                  />
-              </View>
+              <SwitchSelector
+                options={[
+                  { label: 'In %', value: 'percent' },
+                  { label: 'In Decimal', value: 'num' },
+                ]}
+                initial={0}
+                onPress={handleOptionalChange}
+                // textColor="black"
+                // selectedColor="black"
+                buttonColor="#3482F6"
+                style={{paddingBottom:5}}
+              />
+              {optionalInput === 'percent' ? (
+                  <View>
+                    
+                    {/* INPUT TAX */}
+                    <View style={styles.inputContainer}>
+                      <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 0 }}>Tax (%):             </Text>
+                        <TextInput
+                          className="p-4 bg-white text-gray-700 rounded-2xl w-40 ml-1"
+                          style={{ fontSize: 15, fontWeight: 'bold'}}
+                          value={taxValue}
+                          // onChangeText={handleTaxInputChange}
+                          onChangeText={value=>handleTaxInputChange(value)}
+                          keyboardType="numeric"
+                        />
+                    </View>
+
+                    {/* INPUT SERVICES */}
+                    <View style={styles.inputContainer}>
+                      <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 0 }}>Service (%):      </Text>
+                        <TextInput
+                          className="p-4 bg-white text-gray-700 rounded-2xl w-40 ml-1"
+                          style={{ fontSize: 15, fontWeight: 'bold'}}
+                          value={serviceValue}
+                          // onChangeText={handleServiceInputChange}
+                          onChangeText={value=>handleServiceInputChange(value)}
+                          keyboardType="numeric"
+                        />
+                    </View>
+
+                    {/* INPUT DISCOUNTS */}
+                    <View style={styles.inputContainer}>
+                      <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 0 }}>Discounts (%): </Text>
+                        <TextInput
+                          className="p-4 bg-white text-gray-700 rounded-2xl w-40 ml-1"
+                          style={{ fontSize: 15, fontWeight: 'bold'}}
+                          value={discountsValue}
+                          // onChangeText={handleDiscountsInputChange}
+                          onChangeText={value=>handleDiscountsInputChange(value)}
+                          keyboardType="numeric"
+                        />
+                    </View>
+
+                  </View>
+                ) : (
+                  // NUMBER input
+                  <View>
+                    
+                    <View>
+                      
+                      {/* INPUT TAX */}
+                      <View style={styles.inputContainer}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 0 }}>Tax:             </Text>
+                          <TextInput
+                            className="p-4 bg-white text-gray-700 rounded-2xl w-40 ml-1"
+                            style={{ fontSize: 15, fontWeight: 'bold'}}
+                            value={taxValueNumber}
+                            onChangeText={value=>handleTaxInputNumberChange(value)}
+                            keyboardType="numeric"
+                          />
+                      </View>
+
+                      {/* INPUT SERVICES */}
+                      <View style={styles.inputContainer}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 0 }}>Service:      </Text>
+                          <TextInput
+                            className="p-4 bg-white text-gray-700 rounded-2xl w-40 ml-1"
+                            style={{ fontSize: 15, fontWeight: 'bold'}}
+                            value={serviceValueNumber}
+                            // onChangeText={handleServiceInputChange}
+                            onChangeText={value=>handleServiceInputNumberChange(value)}
+                            keyboardType="numeric"
+                          />
+                      </View>
+
+                      {/* INPUT DISCOUNTS */}
+                      <View style={styles.inputContainer}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 0 }}>Discounts: </Text>
+                          <TextInput
+                            className="p-4 bg-white text-gray-700 rounded-2xl w-40 ml-1"
+                            style={{ fontSize: 15, fontWeight: 'bold'}}
+                            value={discountsValueNumber}
+                            // onChangeText={handleDiscountsInputChange}
+                            onChangeText={value=>handleDiscountsInputNumberChange(value)}
+                            keyboardType="numeric"
+                          />
+                      </View>
+
+                    </View>
+                  </View>
+              )}
+
+              
+
             </View>
 
-            {/* Confirm BIll */}
-            <View style={styles.bottom}>
-                <SwipeButtonScreen confirmBill={confirmBill}/>
+            <View className="mt-5 mx-3">
+              <SwitchSelector
+                options={[
+                  { label: 'Split According to Expense', value: 'expense' },
+                  { label: 'Split Evenly', value: 'even ' },
+                ]}
+                initial={0}
+                onPress={handleSwitchChange}
+                // textColor="black"
+                // selectedColor="black"
+                buttonColor="#3482F6"
+              />
             </View>
+
+            <View className="flex-1 items-center py-1">
+
+            {/* Confirm BIll */}
+            {billStatus === 'expense' ? (
+                <View style={styles.bottom}>
+                    <SwipeButtonScreen confirmBill={confirmBill}/>
+                </View>
+              ) : (
+                // evenly split evenlySplit
+                <View style={styles.bottom}>
+                  <EvenlySwipeButton confirmBill={evenlySplit}/>
+                </View>
+            )}
+
+
+
+            </View>
+
+            {/* RESULT MODAL */}
+            {/* <Modal 
+                animationType="fade" 
+                visible={showUserModal} 
+                onRequestClose={()=>toggleUserModal()}
+            >
+                <AddMembersModal
+                    users={users}
+                    selectedUsers={selectedUsers} 
+                    closeModal={toggleUserModal} //done
+                    verifyNonUser={verifyAllMembers}
+                    addSelectedUser={addSelectedUser}
+                    removeSelectedUser={removeSelectedUser}
+                    nonUser={nonUser}
+                    addMembers={addMembers}
+                    checkUpdateMembers={checkUpdateMembers}
+                    deleteMembers={deleteMembers}
+                    nonUserId={nonUserId}
+                />
+            </Modal> */}
             
         </View>
       </ScrollView>

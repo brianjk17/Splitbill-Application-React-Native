@@ -49,9 +49,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
+    borderColor: '#717171',
+    borderRadius: 15,
     marginBottom: 10,
+    backgroundColor:'white',
+    marginHorizontal:10,
   },
   selectedCard: {
     backgroundColor: '#f0f0f0',

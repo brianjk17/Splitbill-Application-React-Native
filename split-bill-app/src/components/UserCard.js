@@ -73,7 +73,7 @@ export default function UserCard({users, toggleUserModal, billowner, selectedUse
         <SafeAreaView className="flex-row ">
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
 
-          {console.log(users)}
+          {/* {console.log(users)} */}
             {users.map((user) => (
               <React.Fragment key={user.User.phone}>
                 {renderUser({ item: user })}

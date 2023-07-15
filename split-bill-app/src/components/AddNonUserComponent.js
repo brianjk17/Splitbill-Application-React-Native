@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { TouchableOpacity } from "react-native";
 import { View, Text, TextInput, Button, KeyboardAvoidingView, ScrollView } from "react-native";
 
 const MutableCard = ({member, deleteMembers, checkUpdateMembers,nonUserId }) => {
@@ -7,22 +8,6 @@ const MutableCard = ({member, deleteMembers, checkUpdateMembers,nonUserId }) => 
   console.log("MutableCard")
   console.log(member.User.nonUserId)
   console.log(nonUserId)
-  
-
-//   const handleUpdate = () => {
-//     if(name===''||phone.length<7){
-//         alert("Please complete all fields")
-//       }
-//     else{
-//         //check check phone in db
-//         const updatedexpense = {User:{
-//             id: member.User.nonUserId,
-//             name: name,
-//             phone: phone,
-//         }}
-//         checkUpdateMembers(member.User.nonUserId,updatedexpense);
-//       }
-//   };
 
    function handleNameChange(text){
     console.log("handleNameChange")
@@ -67,23 +52,45 @@ const MutableCard = ({member, deleteMembers, checkUpdateMembers,nonUserId }) => 
   },[])
   
   return (
-    <View style={{ marginVertical: 10 }}>
-        <Text>{member.User.nonUserId}</Text>
+    <View style={{ marginVertical: 10,
+      padding: 10,
+      borderWidth: 1,
+      borderColor: '#717171',
+      borderRadius: 15,
+      marginBottom: 10,
+      backgroundColor:'white',
+    }}>
+        <Text>Fullname</Text>
         <TextInput
             style={{ borderWidth: 1, padding: 10, marginBottom: 10 }}
             value={name}
-            placeholder="Name"
+            placeholder="Fullname"
             onChangeText={handleNameChange}
         />
+        <Text>Phone Number</Text>
         <TextInput
             style={{ borderWidth: 1, padding: 10, marginBottom: 10 }}
             value={phone}
-            placeholder="Phone"
+            placeholder="Phone Number"
             onChangeText={handlePhoneChange}
             keyboardType="numeric"
         />
         {/* <Button title="Update" onPress={handleUpdate} /> */}
-        <Button title="Delete" onPress={handleDelete} />
+        <TouchableOpacity 
+        onPress={handleDelete}
+        style={{
+              alignItems: 'center',
+              padding: 10,
+              borderRadius: 15,
+              marginBottom: 10,
+              backgroundColor:'#FF2323',
+              marginHorizontal:10,
+        }}>
+          <Text style={{
+            fontWeight: 'bold',
+            color:"white"
+          }}>Delete</Text>
+        </TouchableOpacity>
     </View>
   );
 };
@@ -118,28 +125,9 @@ const AddNonUserComponent = ({
     console.log("Input changed");
   };
 
-//   const handleAddMember = () => {
-//     const newNonUserId = nonUserId + 1;
-
-//     // setMembers((prevMembers) => [...prevMembers, {}]);
-//     setMembers((prevMembers) => [
-//         ...prevMembers,
-//         {User:{ nonUserId: nonUserId, name: "", phone: "" }},
-//     ]);
-//     setNonUserId(newNonUserId)
-//   };
-
-//   const handleDeleteMember = (index) => {
-//     setMembers((prevMembers) => {
-//       const updatedMembers = [...prevMembers];
-//       updatedMembers.splice(index, 1);
-//       return updatedMembers;
-//     });
-//   };
-
   console.log(nonUser)
   return (
-    <View style={{ margin: 20 }}>
+    <View style={{ margin: 20,}}>
         <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10 }}>
             Members:
         </Text>

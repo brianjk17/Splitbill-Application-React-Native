@@ -120,7 +120,7 @@ export default function AddMembersModal({ nonUserId,
       
     return(
         <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-            <ScrollView className={{  backgroundColor: 'gray-100' }} contentContainerStyle={{ flexGrow: 1 }}>
+            <ScrollView style={{backgroundColor:"#EDEDED"}} contentContainerStyle={{ flexGrow: 1 }}>
                             
             <View>
                 <View className="flex-row justify-start">
@@ -168,7 +168,7 @@ export default function AddMembersModal({ nonUserId,
                                 width: 300,
                                 height: 75,
                                 borderRadius: 30,
-                                backgroundColor: '#f0f0f0',
+                                backgroundColor: '#8D8D8D',
                                 justifyContent: 'center',
                                 alignItems: 'center',
                                 padding: 5,
@@ -176,7 +176,8 @@ export default function AddMembersModal({ nonUserId,
                                 <Text style={{
                                     textAlign: 'center',
                                     fontSize: 16,
-                                    fontWeight: 'bold',}}>
+                                    fontWeight: 'bold',
+                                    color:"white"}}>
                                     Confirm Add Contact(s)
                                 </Text>
                             </TouchableOpacity>
@@ -206,16 +207,18 @@ export default function AddMembersModal({ nonUserId,
                                             width: 300,
                                             height: 75,
                                             borderRadius: 30,
-                                            backgroundColor: '#f0f0f0',
+                                            backgroundColor: '#8D8D8D',
                                             justifyContent: 'center',
                                             alignItems: 'center',
                                             padding: 5,
+
                                         }}
                                     >
                                         <Text style={{
                                             textAlign: 'center',
                                             fontSize: 16,
-                                            fontWeight: 'bold',}}>
+                                            fontWeight: 'bold',
+                                            color:"white"}}>
                                             Confirm Add Member(s)
                                         </Text>
                                     </TouchableOpacity>

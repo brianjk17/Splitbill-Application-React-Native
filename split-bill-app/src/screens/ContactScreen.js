@@ -42,7 +42,7 @@ export default function ContactScreen(){
                 <AddContactScreen toggleAddModal={handleAdd} setIsLoading={setIsLoading}/>
             </Modal>
 
-            <Loading isLoading={isLoading} style={styles.loadingContainer}/>
+            <Loading isLoading={isLoading} style={styles.loadingContainer}></Loading>
 
             <ContactTabCard setIsLoading={setIsLoading} loading={toggleAddContactScreenModal}/>
             {/* <TouchableOpacity

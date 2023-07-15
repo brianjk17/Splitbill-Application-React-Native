@@ -66,30 +66,19 @@ const AddExpenseModal = ({ onAddExpense, closeModal, newId }) => {
   
   const handleQuantityChange = (text) => {
     // Remove any non-numeric characters from the input
-    const filteredText = text.replace(/[^1-9]/g, '');
+    const filteredText = text.replace(/^0+|[^\d]/g, '');
 
-    // // Check if the first character is a decimal point
-    // if (filteredText.startsWith('.')) {
-    //   // Discard the input if it starts with a decimal point
-    //   return;// Make sure only one decimal point exists
-    // }
-
-    // const decimalCount = filteredText.split('.').length - 1;
-    // if (decimalCount > 1) {
-    //   // More than one decimal point present, discard the new one
-    //   return;
-    // }
     setExpenseQuantity(filteredText);
   };
 
   return (
-    <View className="flex-1 bg-[#f8f8f8] p-4">
+    <View className="flex-1 bg-[#f8f8f8] p-4 ">
        
-      <View className="justify-center mb-40 mt-40 bg-[#FFE562] rounded-2xl px-4 pb-6 h-[500px]">
+      <View className="justify-center mb-40 pt-5 bg-[#FFE562] rounded-2xl px-4 pb-6 h-[550]">
         <Text className="text-lg font-bold mb-2 ">Add Expense</Text>
         
 
-        {/* <Text className="text-lg font-bold mb-2 ">Add Expense</Text> */}
+        <Text className="text-lg font-bold mb-2 ">Add Expense Name</Text>
         <TextInput
           placeholder="Expense Name"
           value={expenseName}
@@ -97,6 +86,7 @@ const AddExpenseModal = ({ onAddExpense, closeModal, newId }) => {
           className="p-4 bg-white text-gray-700 rounded-2xl mb-3"      
         />
 
+        <Text className="text-lg font-bold mb-2 ">Input the total expense price</Text>
         <TextInput
           placeholder="Total Expense Price"
           value={expensePrice}
@@ -105,6 +95,7 @@ const AddExpenseModal = ({ onAddExpense, closeModal, newId }) => {
           className="p-4 bg-white text-gray-700 rounded-2xl mb-3"      
         />
 
+        <Text className="text-lg font-bold mb-2 ">Input the quantity of the expense</Text>
         <TextInput
           placeholder="Expense Quantity"
           value={expenseQuantity}

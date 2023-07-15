@@ -110,6 +110,7 @@ export default function LoginScreen() {
       console.log("phone:"+phone.toString())
       
       console.log('Login AsyncStorage stored successfully.');
+      navigation.navigate('Nav') 
     } catch (error) {
       console.log('Error storing login status: ', error);
     }

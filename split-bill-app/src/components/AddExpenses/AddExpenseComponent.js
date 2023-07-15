@@ -61,18 +61,7 @@ export default function AddExpenseComponent({expenses, addExpense, deleteExpense
   return (
     <View  className="flex-1 bg-[#A6A6A6] rounded-2xl px-4 py-3 mt-3 mx-3">
       {/* <Button title="Add a new expense" onPress={toggleModal} className="bg-blue-500 text-white py-2 px-4 rounded"/> */}
-      <TouchableOpacity  onPress={toggleModal} 
-        className="bg-blue-500 mb-3 mt-3" 
-        style={{
-            height: 50,
-            borderRadius: 30,
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: 10,
-        }}
-      >
-                <Text className="text-lg font-bold text-white">Add a new expense</Text>
-      </TouchableOpacity>
+
       
       <Modal
       animationType="fade" 
@@ -86,23 +75,25 @@ export default function AddExpenseComponent({expenses, addExpense, deleteExpense
       </Modal>
 
       <SafeAreaView>
-        {/* <FlatList
-            data={expenses}
-            keyExtractor={(item) => item.id}
-            horizontal={false}
-            showsHorizontalScrollIndicator={false}
-            // scrollEnabled={false}
-            renderItem={renderExpenses}
-            keyboardShouldPersistTaps="always"
-            ItemSeparatorComponent={null}
-        /> */}
-        {console.log(expenses)}
         {expenses.map((expense) => (
               <React.Fragment key={expense.id}>
                 {renderExpenses(expense)}
               </React.Fragment>
         ))}
       </SafeAreaView>
+
+      <TouchableOpacity  onPress={toggleModal} 
+        className="bg-blue-500 mb-3 mt-3" 
+        style={{
+            height: 50,
+            borderRadius: 30,
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 10,
+        }}
+      >
+                <Text className="text-lg font-bold text-white">Add a new expense</Text>
+      </TouchableOpacity>
     </View>
   );
 };

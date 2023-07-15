@@ -22,7 +22,7 @@ const MyComponent = () => {
   const data = [
     {
       id: 1,
-      members: ['0888466556', '0186164694'],
+      members: ['0888466556', '0186164694','1','2','3','4','5','16','1231','133'],
       name: 'Fried rice',
       price: '50.00',
       quantity: '2',
@@ -34,7 +34,9 @@ const MyComponent = () => {
       price: '5.00',
       quantity: '2',
     },
+    
   ];
+  
 
   // Group the data by phone number
   const groupedData = data.reduce((result, item) => {
@@ -55,6 +57,52 @@ const MyComponent = () => {
     </View>
   );
 };
+
+// Object {
+//   "bill_name": "Facai",
+//   "created_at": "2023-07-11T13:05:25.509317+00:00",
+//   "discount": 0,
+//   "expenses": Array [
+//     Object {
+//       "id": 1,
+//       "members": Array [
+//         "0176412098",
+//       ],
+//       "name": "Milo",
+//       "price": "5.00",
+//       "quantity": "1",
+//     },
+//     Object {
+//       "id": 2,
+//       "members": Array [
+//         "081586688811",
+//       ],
+//       "name": "Teh ais",
+//       "price": "2.00",
+//       "quantity": "1",
+//     },
+//   ],
+//   "id": 7,
+//   "members": Array [
+//     Object {
+//       "User": Object {
+//         "name": "Wongwk",
+//         "phone": "0176412098",
+//         "user_id": "7",
+//       },
+//     },
+//     Object {
+//       "User": Object {
+//         "name": "Bri",
+//         "phone": "081586688811",
+//         "user_id": 3,
+//       },
+//     },
+//   ],
+//   "payee_phone": "0176412098",
+//   "service": 0,
+//   "tax": 0,
+// },
 
 const styles = {
   container: {

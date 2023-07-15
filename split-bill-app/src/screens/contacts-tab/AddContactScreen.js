@@ -78,8 +78,6 @@ export default function AddContactScreen({toggleAddModal,setIsLoading}) {
           }else{
             confirmAddContact(data, contactID)
           }
-
-         
         }else{
           alert("Phone Number not found")
         }
