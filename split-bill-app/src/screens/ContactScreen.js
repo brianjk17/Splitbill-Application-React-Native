@@ -31,8 +31,9 @@ export default function ContactScreen(){
     },[reload])
 
     return(
-        <View style={{ flex: 1, paddingBottom: 60, }} >
-            <Text>contact screen</Text>
+        <View style={{ flex: 1, paddingBottom: 50, backgroundColor: '#FFE562', }} >
+            <Text className="text-2xl font-extrabold  text-center p-2 mt-10">
+            Contacts</Text>
             
             <Modal
                 animationType="fade" 
@@ -54,12 +55,19 @@ export default function ContactScreen(){
             </TouchableOpacity> */}
 
             <TouchableOpacity
-                className="bg-blue-500" 
+                // className="bg-blue-500"
+                className="bg-blue-500  rounded-full items-center justify-center absolute bottom-28 w-60 p-4 right-14 m-4" 
                 style={[styles.cardContainer]}//, isSelected && styles.selectedCard]}
                 onPress={handleAdd}
             >
                 <Text className="text-lg font-bold text-white">Add Contacts</Text>
             </TouchableOpacity>
+
+            {/* <TouchableOpacity
+                className="bg-blue-500 p-4 rounded-full shadow-lg items-center justify-center absolute bottom-11 right-0 m-4"
+                onPress={()=>toggleExpenseModal()}>
+                <Text Text className="text-white text-lg font-bold">Add Bill</Text>
+            </TouchableOpacity> */}
             
         </View>
     )
@@ -73,7 +81,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 8,
-        marginBottom: 10,
+        marginBottom: 0,
         justifyContent: 'center',
         height:70,
         background: "rgba(59, 130, 246, 1)",

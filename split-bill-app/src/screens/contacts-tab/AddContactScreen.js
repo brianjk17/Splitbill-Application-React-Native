@@ -139,8 +139,8 @@ export default function AddContactScreen({toggleAddModal,setIsLoading}) {
 
   return (
     <View style={styles.container}>
-        <Text>AddContactScreen</Text>   
-        <Text style={styles.title}>Search contact by their phone number</Text>
+        {/* <Text>AddContactScreen</Text>    */}
+        <Text className="text-2xl font-extrabold text-center p-2">Search contact by their phone number</Text>
 
         <View style={styles.inputContainer}>
 
@@ -172,6 +172,7 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       justifyContent: 'center',
       paddingHorizontal: 20,
+      backgroundColor: '#FFE562'
     },
     title: {
       fontSize: 18,
@@ -184,12 +185,13 @@ const styles = StyleSheet.create({
     },
     input: {
       flex: 1,
-      height: 40,
+      height: 60,
       borderWidth: 1,
       borderColor: '#ccc',
       borderRadius: 8,
       paddingHorizontal: 10,
       marginRight: 10,
+      backgroundColor: '#A6A6A6'
     },
     searchButton: {
       backgroundColor: 'blue',

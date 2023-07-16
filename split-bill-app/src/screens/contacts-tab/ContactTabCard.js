@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, ScrollView, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert, SafeAreaView } from 'react-native';
 import { supabase } from '../../../supabase-service';
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { SearchBar } from 'react-native-elements';
+
 
 export default ContactCard = ({setIsLoading, loading}) => {
 
@@ -233,7 +235,10 @@ export default ContactCard = ({setIsLoading, loading}) => {
       newData = [...newData, ...secondData];
       console.log(newData);
     }
+    newData= newData.sort((a, b) => a.User.name.localeCompare(b.User.name));
+
     setContacts(newData);
+    setDisplayContact(newData)
     setIsLoading(false);
     } catch (error) {
       // console.log(isUser_id)
@@ -250,6 +255,8 @@ export default ContactCard = ({setIsLoading, loading}) => {
     getUser_id()
     fetchData()
   },[isLoading1])
+
+
 
   function Contactcard({data}){
     console.log(data)
@@ -272,36 +279,62 @@ export default ContactCard = ({setIsLoading, loading}) => {
     )
   }
 
-  function renderList(item){
-    return(
-    <TouchableOpacity
-        key={item.User.user_id}
-        style={[styles.cardContainer]}//, isSelected && styles.selectedCard]}
-        onPress={handleSelect}
-      >
-        <View style={styles.circleContainer}>
-          <Text style={styles.initial}>{item.User.name.charAt(0)}</Text>
-        </View>
-        <View style={styles.userInfoContainer}>
-          <Text style={styles.name}>{item.User.name}</Text>
-          <Text style={styles.phoneNumber}>{item.User.phone}</Text>
-        </View>
-      </TouchableOpacity>
-    )
+  const [search, setSearch] = useState("")
+  const [displayContact, setDisplayContact] = useState([])
+
+  searchContactFunction = (text) => {
+    setSearch(text)
+    if(text.length===0){
+      clearSearchFunction()
+      return
+    }
+    const searchResult = contacts.filter(obj => {
+      // console.log(obj.User.name)
+      const userName = obj.User.name.toLowerCase();
+      const search = text.toLowerCase();
+      for (let i = 0; i < search.length; i++) {
+        if (!userName.includes(search[i])) {
+          return false;
+        }
+      }
+      return true;
+    });
+    setDisplayContact(searchResult)
+  };
+
+  clearSearchFunction =()=>{
+    setDisplayContact(contacts)
+    setSearch('')
   }
 
+  
   return (
-  //   <View className="flex-1 items-center py-1">
-  //     <FlatList
-  //       data={contacts}
-  //       // showsHorizontalScrollIndicator={false}
-  //       renderItem={({item})=>renderList(item)}
-  //       keyExtractor={(item) => item.User.phone}
-  //       keyboardShouldPersistTaps="always"
-  //       // contentContainerStyle={{ paddingBottom: 115 }}
-  //     />
-  //  </View>
-  <Contactcard data={contacts}/>
+            <View >
+                <SafeAreaView>
+                  {contacts.length===0 ?(<Text>No Bills</Text>)://change to displayBills
+                  (<View style={{}}>
+                    <SearchBar
+                      lightTheme
+                      round
+                      searchIcon={{ size: 24 }}
+                      onChangeText={(text) => searchContactFunction(text)}
+                      // onClear={() => clearSearchFunction()}
+                      placeholder="Search Here..."
+                      value={search}
+                    />
+                  </View>
+                  )}
+
+                  <ScrollView 
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ paddingBottom: 350 }}
+                  >
+                    {/* displayContact */}
+                    <Contactcard data={displayContact}/>
+
+                  </ScrollView>
+                </SafeAreaView>
+              </View>
   );
 };
 // Dev Tools Web UI has been removed. Learn more: https://blog.expo.dev/sunsetting-the-web-ui-for-expo-cli-ab12936d2206
@@ -312,11 +345,11 @@ const styles = StyleSheet.create({
     padding: 10,
 
     borderWidth: 2,
-    borderColor: '#ccc',
+    borderColor: '#A6A6A6',
     borderRadius: 30,
     // marginBottom: 10,
     marginVertical:6,
-    backgroundColor: '#FFE562'
+    backgroundColor: '#A6A6A6'
   },
   selectedCard: {
     backgroundColor: '#f0f0f0',
@@ -340,9 +373,10 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 18,
     fontWeight: 'bold',
+    
   },
   phoneNumber: {
     fontSize: 16,
-    color: '#999',
+    // color: '#999',
   },
 });

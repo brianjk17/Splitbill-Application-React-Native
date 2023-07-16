@@ -36,16 +36,17 @@ export default function NavScreen() {
       // // screenOptions={{
       // //   tabBarStyle: { position: 'absolute' },
       // // }}
-      // >
+      // > style={{backgroundColor: '#FFE562', }}
       <Tab.Navigator
         backBehavior="none"
         screenOptions={{
+          headerShown: false,
           tabBarShowLabel: false,
           tabBarStyle: {
-            // position: 'absolute',
+            position: 'absolute',
             bottom: 25,
-            // right: 20,
-            // left: 20,
+            right: 20,
+            left: 20,
             
             elevation: 6,
             borderRadius: 15,

@@ -15,20 +15,27 @@ export default function HomeScreen(){
         setCurrentPhone(currentPhoneNum.toString())
         // setCurrentUser_id(currentUser_id.toString())
         setCurrentName(currentUserName)
+        getBillData()
         return 
     } catch (error) {
         console.log('Error retrieving login status: ', error);
         return false; // Default value in case of error
     }
+    
   }
 
   const [activeBills, setActiveBills] = useState(0)
+  const [bills, setBills] = useState([]);
+
 
   async function getBillData(){
     try {
       const { data, error} = await supabase
         .from('Bill')
         .select()
+      if(bills.length===0){
+        setBills([...bills, data]);
+      }        
       if(error){
         console.log("error: ", error)
       } else{
@@ -54,36 +61,59 @@ export default function HomeScreen(){
     getData()
     getBillData()
   },[])
-  return(
-    //Show number of active bills
-    // show how much you owe
-    //show how much people owe you
-    <View style={{flex:1,alignItems: 'center',}}>
-      <View style={styles.container}>
-        <Text style={styles.greeting}>Hello, {currentName}! </Text>
+
+  useEffect(()=>{
+    getBillData()
+  },[bills])
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.greeting}>Hello, {currentName}!</Text>
+      <View style={styles.infoContainer}>
+        <Text style={styles.infoText}>You have {activeBills} active bills</Text>
       </View>
-      <Text></Text>
-      <View style={styles.container}>
-        <Text style={styles.greeting}>You have {activeBills} active bills</Text>
+      {/* <View style={styles.infoContainer}>
+        <Text style={styles.infoText}>You owe: ${amountOwed}</Text>
       </View>
+      <View style={styles.infoContainer}>
+        <Text style={styles.infoText}>People owe you: ${amountOwedToYou}</Text>
+      </View> */}
     </View>
-    
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    // flex: 1,
-    // justifyContent: 'center',
-    // marginHorizontal:40,
-    width:300,
+    flex: 1,
     alignItems: 'center',
-    padding: 20,
-    borderRadius:20,
-    backgroundColor: "grey"
+    justifyContent: 'center',
+    backgroundColor: '#FFE562',
   },
   greeting: {
     fontSize: 24,
     fontWeight: 'bold',
+    marginBottom: 20,
+    // color:"#947910"
+  },
+  infoContainer: {
+    backgroundColor: '#d1d1d1',
+    width: 300,
+    padding: 20,
+    marginBottom: 20,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  infoText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    // color:"#947910"
   },
 });

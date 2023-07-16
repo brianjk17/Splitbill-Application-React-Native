@@ -5,14 +5,16 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 // import {ArrowLeftIcon} from 'react-native-heroicons/solid';
 import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../supabase-service';
+import { CheckBox } from 'react-native-elements';
 
 export default function SignUpScreen() {
     const navigation = useNavigation();
     const [name, setName] = useState('');
-    // const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [confpassword, setConfpassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+
 
     function reset(){setName('')
     setPhone('')
@@ -100,7 +102,7 @@ export default function SignUpScreen() {
             navigation.navigate('Login')
         }
     }
-
+    
     return (
     <View className="flex-1 flex bg-white" style={{backgroundColor: '#171717'}}>
         
@@ -121,7 +123,7 @@ export default function SignUpScreen() {
         </View>
       </SafeAreaView>
 
-      <View className="flex-1 bg-stone-300 px-8 pt-8"
+      <View className="flex-1 bg-stone-300 px-8 pt-6"
         style={{borderTopLeftRadius: 50, borderTopRightRadius: 50}}
       >
         <View className="form space-y-0.5">
@@ -152,25 +154,31 @@ export default function SignUpScreen() {
 
             <Text className="text-gray-700 ml-4">Password</Text>
             <TextInput
-                className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-7"
-                secureTextEntry
+                className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
+                secureTextEntry={!showPassword}
+
                 value={password}
                 placeholder='Enter Password'
                 onChangeText={value=>setPassword(value)}
+            />
+            <CheckBox
+              title="Show password"
+              checked={showPassword}
+              onPress={() => setShowPassword(!showPassword)}
             />
             
             <Text className="text-gray-700 ml-4">Confirm Password</Text>
             <TextInput
                 className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-7"
-                secureTextEntry
+                secureTextEntry={!showPassword}
                 value={confpassword}
                 placeholder='Enter Password'
                 onChangeText={value=>setConfpassword(value)}
             />
+            
 
             <TouchableOpacity 
-                className="py-3 bg-yellow-400 rounded-xl"
-                // onPress={()=> navigation.navigate('Login')}
+                className="py-5 bg-yellow-400 rounded-xl"
                 onPress={()=>userRegister()}
             >
                 <Text className="font-xl font-bold text-center text-gray-700">

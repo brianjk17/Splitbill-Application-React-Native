@@ -9,6 +9,7 @@ import { useNavigation } from '@react-navigation/native'
 
 import { supabase } from '../supabase-service'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { CheckBox } from 'react-native-elements'
 
     //UPDATE
     // async function updatePassword() {
@@ -121,7 +122,7 @@ export default function LoginScreen() {
   async function userLogin() {
     //PASSWORD SYMMETRIC CRYPTOGRAPHY
     if(phone=="" || password==""){
-      navigation.navigate('Nav')                      //DELETE
+      // navigation.navigate('Nav')                      //DELETE
       alert("Empty input(s) phone number or password")
       return
     }
@@ -146,6 +147,7 @@ export default function LoginScreen() {
         console.log('Login success');
         storeLoginStatus(true, data[0].user_id, data[0].name, phone);
         console.log(user_id);
+        navigation.navigate('Nav') 
       } else {
         console.log(error);
         console.log(phone, password);
@@ -160,11 +162,13 @@ export default function LoginScreen() {
   //     storeLoginStatus(true);
   //   }
   // }, [user_id]);
-
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
+    
     <View className="flex-1 flex bg-zinc-100" style={{backgroundColor: '#171717'}}>
       <SafeAreaView  className="flex ">
+        
         <View className="flex-row justify-start">
           <TouchableOpacity onPress={()=> {
             setPhone('')
@@ -187,30 +191,36 @@ export default function LoginScreen() {
       <View 
         style={{borderTopLeftRadius: 50, borderTopRightRadius: 50}} 
         className="flex-1 flex bg-stone-300 px-8 pt-7">
-          <View className="form space-y-3">
+          <View className="form space-y-2">
             <Text className="text-gray-700 ml-4">Phone Number</Text>
             <TextInput 
-              className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-3"
+              className="p-4 bg-gray-100 text-gray-700 rounded-2xl mb-2"
               keyboardType='numeric'
               value={phone}
               placeholder="Enter Phone Number"
               onChangeText={value=>setPhone(value)}
             />
+
             <Text className="text-gray-700 ml-4">Password</Text>
             <TextInput 
               className="p-4 bg-gray-100 text-gray-700 rounded-2xl"
-              secureTextEntry
+              secureTextEntry={!showPassword}
               value={password}
               placeholder='Enter Password'
               onChangeText={value=>setPassword(value)}
             />
 
+            <CheckBox
+              title="Show password"
+              checked={showPassword}
+              onPress={() => setShowPassword(!showPassword)}
+            />
             {/* <TouchableOpacity className="flex items-end">
               <Text className="text-gray-700 mb-5">Forgot Password?</Text>
             </TouchableOpacity> */}
-
+            <Text></Text>
             <TouchableOpacity 
-              className="py-3 bg-yellow-400 rounded-xl"
+              className="py-2 bg-yellow-400 rounded-xl "
               onPress={()=> userLogin()}
               >
                 <Text 
@@ -235,7 +245,7 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View> */}
 
-          <View className="flex-row justify-center mt-7">
+          <View className="flex-row justify-center mt-5">
               <Text className="text-gray-500 font-semibold">
                   Don't have an account?
               </Text>

@@ -309,6 +309,7 @@ export default function ExpenseScreen({toggleExpenseModal}){
         console.log("Nothing Modified")
         // toggleUserModal()
       }
+
       // //update the modified to the selected users
       // const updatedArray1 = selectedUsers.map((obj1) => {
       //   const obj2 = modifiedObjects.find((obj) => obj.User.nonUserid === obj1.User.nonUserid);
@@ -339,14 +340,16 @@ export default function ExpenseScreen({toggleExpenseModal}){
             .in('phone', phoneNumbers)
       console.log("verify")
       console.log(data?.length)
+      console.log(data)
+
       if (error){
         console.log(error)
         return false
       } else if (data?.length === 0) {
         console.log("proceed")
-        return true
+        return data
       } else{
-        return false
+        return data
       }
     }
     
@@ -361,7 +364,7 @@ export default function ExpenseScreen({toggleExpenseModal}){
       console.log("HAH")
       console.log(nonUser===[])
       if(nonUser.length===0){
-        console.log("No user")
+        console.log("No users")
         updateArrays()
         setPrevMembersData(nonUser)
         toggleUserModal()
@@ -372,18 +375,51 @@ export default function ExpenseScreen({toggleExpenseModal}){
       console.log(prevMembersData)
       console.log(nonUser)
       console.log(JSON.stringify(prevMembersData) === JSON.stringify(nonUser))
+
       for (const item of nonUser){
         const { name, phone } = item.User;
         console.log(name, phone)
 
         if(name.trim() !== '' && phone.length > 5){
           const isVerified = await verify();
-          console.log(isVerified)
+          const currentPhone = await AsyncStorage.getItem('phone');
+          
+
+          console.log("isVerified")
+          console.log(users)
           console.log(isVerified===false)
-          if(isVerified===false){
+
+          const phoneNumberExists = selectedUsers.some(
+            obj => obj.User.phone === phone
+          );
+          
+          const phoneNumberContacts = users.some(
+            obj => obj.User.phone === phone
+          );
+
+          //check if the used number is current user
+          if(isVerified.length!==0 && isVerified[0].phone===currentPhone){
+            alert(name+" This phone number is your phone number")
+            break
+          } 
+          //check if the used number is in the nonmembers
+          else if(isVerified!==null && phoneNumberExists){
+            alert("This phone number is already in the list of bill members")
+            break
+          } 
+          //check if the used number is in the contacts
+          else if(isVerified!==null && phoneNumberContacts){
+            alert("This phone number is in your contacts")
+            break
+          }
+          else if(isVerified.length!==0){
             alert(name+"'s phone number is used\n"+phone)
             break
-          } else{
+          } 
+
+          //if the number is in the system but not in contacts, change the name and store the user data
+
+          else{
             console.log("verified")
             updateArrays()
             setPrevMembersData(nonUser)
@@ -973,7 +1009,7 @@ export default function ExpenseScreen({toggleExpenseModal}){
     <KeyboardAvoidingView behavior="none" style={{ flex: 1 }}>
 
       <ScrollView className="flex-1 " style={{backgroundColor:"#EDEDED"}}>
-        <View className="flex-1 ">
+        <View style={{ flex: 1, backgroundColor: '#FFE562', }}>
 
             <TouchableOpacity
               className="bg-[#343434] text-white p-2 rounded-tr-2xl rounded-bl-2xl ml-2 w-16 justify-center items-center"
@@ -1103,10 +1139,7 @@ export default function ExpenseScreen({toggleExpenseModal}){
                   </View>
                 ) : (
                   // NUMBER input
-                  <View>
-                    
-                    <View>
-                      
+                  <View style={{flex:1, alignContent:"center", justifyContent:"center"}}>
                       {/* INPUT TAX */}
                       <View style={styles.inputContainer}>
                         <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 0 }}>Tax:             </Text>
@@ -1144,8 +1177,6 @@ export default function ExpenseScreen({toggleExpenseModal}){
                             keyboardType="numeric"
                           />
                       </View>
-
-                    </View>
                   </View>
               )}
 

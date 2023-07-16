@@ -204,24 +204,24 @@ export default function BillScreen(){
   const [search, setSearch] = useState('');
   const [displayBills, setDisplayBills] = useState([])
  
-  searchSettledFunction = (text) => {
-    setSearch(text)
-    if(text.length===0){
-      clearSearchFunction()
-      return
-    }
-    const searchResult = billsData.filter(obj => {
-      const billName = obj.bill_name.toLowerCase();
-      const search = text.toLowerCase();
-      for (let i = 0; i < search.length; i++) {
-        if (!billName.includes(search[i])&&obj.paid === false) {
-          return false;
-        }
-      }
-      return true;
-    });
-    setDisplayBills(searchResult)
-  };
+  // searchSettledFunction = (text) => {
+  //   setSearch(text)
+  //   if(text.length===0){
+  //     clearSearchFunction()
+  //     return
+  //   }
+  //   const searchResult = billsData.filter(obj => {
+  //     const billName = obj.bill_name.toLowerCase();
+  //     const search = text.toLowerCase();
+  //     for (let i = 0; i < search.length; i++) {
+  //       if (!billName.includes(search[i])&&obj.paid === false) {
+  //         return false;
+  //       }
+  //     }
+  //     return true;
+  //   });
+  //   setDisplayBills(searchResult)
+  // };
 
   searchActiveFunction = (text) => {
     setSearch(text)
@@ -248,12 +248,12 @@ export default function BillScreen(){
   }
 
   return(
-    <SafeAreaView className="flex-1">
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#FFE562', }}>
       {/* <View className="flex-1"> */}
         {/* <Text className="pt-3">This is Bill Screen</Text> */}
         
-        <View>
-          <Text className="text-2xl font-extrabold  text-center p-2">
+        <View >
+          <Text className="text-2xl font-extrabold text-center p-2 mt-10">
             This is your Bills
           </Text>
           <SwitchSelector
@@ -267,18 +267,12 @@ export default function BillScreen(){
           />
         </View>
 
-            {/* SEARCH BY NAME */}
+        {/* SEARCH BY BILL NAME */}
 
         <View className="flex-1 items-center py-1">
           {billStatus === 'active' ? (
               <View >
                 <SafeAreaView>
-
-                  {/* <TextInput
-                    placeholder="Search..."
-                    value={searchText}
-                    onChangeText={(text) => setSearchText(text)}
-                  /> */}
                   {billsData.length===0 ?(<Text>No Bills</Text>)://change to displayBills
                   (<View style={{width: 340,}}>
                     <SearchBar
@@ -289,13 +283,14 @@ export default function BillScreen(){
                       onClear={() => clearSearchFunction()}
                       placeholder="Type Here..."
                       value={search}
+                      // containerStyle  =
                     />
                   </View>
                   )}
 
                   <ScrollView 
                     showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{ paddingBottom: 115 }}
+                    contentContainerStyle={{ paddingBottom: 170 }}
                   >
                     {displayBills.map((bill) => { //change to displayBills
                       if (bill.paid === false) {
@@ -329,7 +324,7 @@ export default function BillScreen(){
                     
                     <ScrollView 
                       showsVerticalScrollIndicator={false}
-                      contentContainerStyle={{ paddingBottom: 115 }}
+                      contentContainerStyle={{ paddingBottom: 170 }}
                     >
                       {displayBills.map((bill) => {
                         if (bill.paid === true) {
@@ -348,7 +343,7 @@ export default function BillScreen(){
           )}
 
           <TouchableOpacity
-            className="bg-blue-500 p-4 rounded-full shadow-lg items-center justify-center absolute bottom-11 right-0 m-4"
+            className="bg-blue-500 p-4 rounded-full shadow-lg items-center justify-center absolute bottom-24 right-0 m-4"
             onPress={()=>toggleExpenseModal()}>
             <Text Text className="text-white text-lg font-bold">Add Bill</Text>
           </TouchableOpacity>
