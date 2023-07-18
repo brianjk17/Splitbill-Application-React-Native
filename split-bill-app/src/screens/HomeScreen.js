@@ -33,7 +33,11 @@ export default function HomeScreen(){
       const { data, error} = await supabase
         .from('Bill')
         .select()
+      // if(currentName.length===0){
+      //     getData()
+      //   } 
       if(bills.length===0){
+       
         setBills([...bills, data]);
       }        
       if(error){
@@ -63,6 +67,9 @@ export default function HomeScreen(){
   },[])
 
   useEffect(()=>{
+    if(currentName.length===0){
+          getData()
+        } 
     getBillData()
   },[bills])
 

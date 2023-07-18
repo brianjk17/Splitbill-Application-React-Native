@@ -123,11 +123,13 @@ export default function BillScreen(){
     // console.log(item)
     // console.log("AHAHHAHA")
     return(
-      <View className="items-center py-1">
+      <View className="items-center py-1" >
 
-        <Modal animationType="fade" visible={billModal} onRequestClose={toggleBillModal}>
+        <Modal animationType="fade" visible={billModal} onRequestClose={toggleBillModal} >
           {/* {console.log(selectedBill)} */}
-          <BillModal closeModal={toggleBillModal} bill={selectedBill} currentPhone={currentPhone}/>
+          <View style={{backgroundColor:"#FFE562"}}>
+            <BillModal closeModal={toggleBillModal} bill={selectedBill} currentPhone={currentPhone}/>
+          </View>
         </Modal>
 
         <BillCard 
