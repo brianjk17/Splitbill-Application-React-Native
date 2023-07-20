@@ -5,6 +5,7 @@ import { StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
 import AddContactScreen from "./contacts-tab/AddContactScreen";
 import Loading from "../LoadingScreen";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function ContactScreen(){
     const [toggleAddContactScreenModal,setToggleAddContactScreenModal ]=useState(false)
@@ -18,17 +19,19 @@ export default function ContactScreen(){
         console.log("Add Contact")
         setToggleAddContactScreenModal(!toggleAddContactScreenModal)
     };
+
     useEffect(()=>{
-        
         console.log("re render page")
-        
     },[toggleAddContactScreenModal])
 
     useEffect(()=>{
-        
         console.log("re render page")
-        
     },[reload])
+
+    const isFocused = useIsFocused();
+    useEffect(()=>{
+        // console.log("focused")
+    },[isFocused])
 
     return(
         <View style={{ flex: 1, paddingBottom: 50, backgroundColor: '#FFE562', }} >

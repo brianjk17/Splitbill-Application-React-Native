@@ -11,16 +11,23 @@ import AddExpenseComponent from "../components/AddExpenses/AddExpenseComponent";
 import { TouchableOpacity } from "react-native";
 import EvenlySwipeButton from "../components/EvenlySwipeButton";
 import SwitchSelector from "react-native-switch-selector";
+import BillModal from "../components/ReadBill/BillModal";
 
 
 export default function ExpenseScreen({toggleExpenseModal}){
   const[showUserModal, setShowUserModal]=useState(false)
 
-  // const[showExpenserModal, setShowExpenseModal]=useState(false)
-
   const[billName, setBillName]=useState("")
   
   const[billOwner, setBillOwner]=useState(null)
+
+  const[selectedUsers, setSelectedUsers]=useState([
+          // { id: 5, name: 'John Doe', phone: '1234567890'},
+          // { id: 20, name: 'Jane Smith', phone: '9876543210'},
+          // { id: 31, name: 'Mike Johnson', phone: '5551234567'},
+          // { id: 17, name: 'Keyrupan Brian Joseph', phone:"234567890"},
+      ]
+  )
 
   function clickSetBillOwner(){
     console.log("SET BILL OWNER")
@@ -32,15 +39,6 @@ export default function ExpenseScreen({toggleExpenseModal}){
     setBillOwner(selectedUserPhone)
     console.log(billOwner)
   }
-
-  const[selectedUsers, setSelectedUsers]=useState([
-          // { id: 5, name: 'John Doe', phone: '1234567890'},
-          // { id: 20, name: 'Jane Smith', phone: '9876543210'},
-          // { id: 31, name: 'Mike Johnson', phone: '5551234567'},
-          // { id: 17, name: 'Keyrupan Brian Joseph', phone:"234567890"},
-      ]
-  )
-
 
   //For assigning the expenses for the users
   const[selectedUserPhone, setSelectedUserPhone]=useState(null)
@@ -74,8 +72,8 @@ export default function ExpenseScreen({toggleExpenseModal}){
       return
     }
 
-    console.log(expenses)
-    console.log(selectedUserPhone)
+    // console.log(expenses)
+    // console.log(selectedUserPhone)
 
     const modifyExpenseMembers = expenses.find(expense => expense.id === expenseId);
     console.log(modifyExpenseMembers)
@@ -328,6 +326,7 @@ export default function ExpenseScreen({toggleExpenseModal}){
       console.log(selectedUsers)
     }
 
+
     
     // check if the phone numbers of the non members are unique from the DB //ADDED or MODIFIED
     async function verify(){
@@ -442,13 +441,11 @@ export default function ExpenseScreen({toggleExpenseModal}){
 
   function toggleUserModal(){
       console.log("toggleUserModal")
-      // console.log(showUserModal)
       setShowUserModal(!showUserModal);
-
-      // console.log(nonUser)
       setNonUser(prevMembersData)
       console.log(nonUser)
   }
+
 
   const addSelectedUser = (user) => {
       console.log("addSelectedUser")
@@ -753,8 +750,14 @@ export default function ExpenseScreen({toggleExpenseModal}){
       console.log("useefek")
       console.log(selectedUsers)
       // setSelectedUsers()
-    },[])
+  },[])
 
+  async function getCurrentPhone(){
+    return (await AsyncStorage.getItem('phone'))
+  }
+
+  // let billData
+  const [billData, setBillData] = useState([])
 
   async function confirmBill(){
     console.log("confirmBill")
@@ -771,7 +774,7 @@ export default function ExpenseScreen({toggleExpenseModal}){
       alert("Please make sure all the users has an expense")
     } else if (expenses.some((item) => item.members.length === 0)){
       alert("Please make sure all the expense has a user assigned to it")
-    } else if(taxValue>100||serviceValue>100||discountsValue>100){
+    } else if(optionalInput === 'percent' && (taxValue>100||serviceValue>100||discountsValue>100)){
       alert("The tax or service or discounts couldn't exceed 100%")
     }
     //const decimalValue = parseFloat(filteredText);
@@ -801,7 +804,7 @@ export default function ExpenseScreen({toggleExpenseModal}){
 
       async function addintoDB(){
         JSON.stringify(expenses)
-        const { error } = await supabase
+        const { data, error } = await supabase
         .from('Bill')
         .insert({
           payee_phone:billOwner,//phone
@@ -813,6 +816,8 @@ export default function ExpenseScreen({toggleExpenseModal}){
           members: selectedUsers,
           paid: false,
         })
+        .select()
+
         if (error) {
             //error will throw here
             console.log("erererereor")
@@ -821,6 +826,7 @@ export default function ExpenseScreen({toggleExpenseModal}){
             alert("Failed to add Bill, please try again")
         }else{
             console.log("Bill added")
+            setBillData(data)
         }
       }
 
@@ -837,16 +843,15 @@ export default function ExpenseScreen({toggleExpenseModal}){
           },
           {
             text: 'OK',
-            onPress: () => {
+            onPress: async () => {
               //STORE TO SUPABASE
               console.log('Confirmed');
               
-              addintoDB()
+              await addintoDB()
+              console.log(billData)
 
-              alert("Bill succefully created")
-              //OPEN RESULT MODAL
-              //CLOSE EXPENSE SCREEN MODAL
-              toggleExpenseModal()
+              // alert("Bill successfully created")
+              toggleBillModal()
             },
           },
         ],
@@ -854,7 +859,10 @@ export default function ExpenseScreen({toggleExpenseModal}){
       );
     }
   }
-
+  function closeExpenseBillModals(){
+    toggleBillModal()
+    toggleExpenseModal()
+  }
   function confirmGoBack(){
     Alert.alert(
         'Confirmation',
@@ -875,18 +883,6 @@ export default function ExpenseScreen({toggleExpenseModal}){
       );
   }
 
-  // function setExpensesEvenly(){
-  //   //get all members phonenumber in an array
-  //   let phoneMembers=[]
-  //   for (let i = 0; i < selectedUsers.length; i++) {
-  //     phoneMembers.push(selectedUsers[i].User.phone);
-  //   }
-
-  //   //assign all users to all the expenses
-  //   for (let i = 0; i < expenses.length; i++) {
-  //     expenses[i].members = phoneMembers;
-  //   }
-  // }
   function evenlySplit(){
     console.log("Evenly confirm Bill")
     if(billName.length===0){
@@ -908,13 +904,6 @@ export default function ExpenseScreen({toggleExpenseModal}){
     //check the optional inputs, check if all optional input is less than 100% or an invalid input
     else{
       console.log("CONFIRM BILL TO BE SPLITTED")
-      console.log(billName)
-      console.log(selectedUsers)
-      console.log(expenses)
-      console.log(billOwner)
-      console.log(taxValue)
-      console.log(serviceValue)
-      console.log(discountsValue)
 
       let phoneMembers=[]
       for (let i = 0; i < selectedUsers.length; i++) {
@@ -933,10 +922,18 @@ export default function ExpenseScreen({toggleExpenseModal}){
           return parseInt(value)
         }
       }
+      
+      console.log(billName)
+      console.log(selectedUsers)
+      console.log(expenses)
+      console.log(billOwner)
+      console.log(check(taxValue))
+      console.log(check(serviceValue))
+      console.log(check(discountsValue))
 
       async function addintoDB(){
         JSON.stringify(expenses)
-        const { error } = await supabase
+        const { data, error } = await supabase
         .from('Bill')
         .insert({
           payee_phone:billOwner,//phone
@@ -948,6 +945,8 @@ export default function ExpenseScreen({toggleExpenseModal}){
           members: selectedUsers,
           paid: false,
         })
+        .select()
+
         if (error) {
             //error will throw here
             console.log("erererereor")
@@ -956,6 +955,7 @@ export default function ExpenseScreen({toggleExpenseModal}){
             alert("Failed to add Bill, please try again")
         }else{
             console.log("Bill added")
+            setBillData(data)
         }
       }
 
@@ -972,16 +972,15 @@ export default function ExpenseScreen({toggleExpenseModal}){
           },
           {
             text: 'OK',
-            onPress: () => {
+            onPress: async () => {
               //STORE TO SUPABASE
               console.log('Confirmed');
               
-              addintoDB()
+              await addintoDB()
+              console.log(billData)
 
-              alert("Bill succefully created")
-              //OPEN RESULT MODAL
-              //CLOSE EXPENSE SCREEN MODAL
-              toggleExpenseModal()
+              // alert("Bill successfully created")
+              toggleBillModal()
             },
           },
         ],
@@ -989,6 +988,10 @@ export default function ExpenseScreen({toggleExpenseModal}){
       );
     }
   }
+  useEffect(()=>{
+    console.log(billData)
+  },[billData])
+
   const [billStatus, setBillStatus] = useState('expense');
   const handleSwitchChange = (value) => {
     setBillStatus(value);
@@ -1004,6 +1007,13 @@ export default function ExpenseScreen({toggleExpenseModal}){
     setServiceValue('')
     setDiscountsValue('')
   };
+
+  const[showBillModal, setShowBillModal]=useState(false)
+
+  function toggleBillModal(){
+    console.log("toggleBillModal")
+    setShowBillModal(!showBillModal);
+  }
 
   return(
     <KeyboardAvoidingView behavior="none" style={{ flex: 1 }}>
@@ -1077,8 +1087,6 @@ export default function ExpenseScreen({toggleExpenseModal}){
               assignExpense={assignExpense}
               selectedUsers={selectedUsers}
             />
-
-               
 
 
             <View className="bg-[#A6A6A6] rounded-2xl px-4 py-3 mt-6 mx-3 ">
@@ -1180,8 +1188,6 @@ export default function ExpenseScreen({toggleExpenseModal}){
                   </View>
               )}
 
-              
-
             </View>
 
             <View className="mt-5 mx-3">
@@ -1211,31 +1217,22 @@ export default function ExpenseScreen({toggleExpenseModal}){
                   <EvenlySwipeButton confirmBill={evenlySplit}/>
                 </View>
             )}
-
-
-
             </View>
 
             {/* RESULT MODAL */}
-            {/* <Modal 
+            {/* BillModal = ({closeModal, bill, currentPhone}) */}
+
+            <Modal 
                 animationType="fade" 
-                visible={showUserModal} 
-                onRequestClose={()=>toggleUserModal()}
+                visible={showBillModal} 
+                onRequestClose={()=>closeExpenseBillModals()}
             >
-                <AddMembersModal
-                    users={users}
-                    selectedUsers={selectedUsers} 
-                    closeModal={toggleUserModal} //done
-                    verifyNonUser={verifyAllMembers}
-                    addSelectedUser={addSelectedUser}
-                    removeSelectedUser={removeSelectedUser}
-                    nonUser={nonUser}
-                    addMembers={addMembers}
-                    checkUpdateMembers={checkUpdateMembers}
-                    deleteMembers={deleteMembers}
-                    nonUserId={nonUserId}
+                <BillModal
+                    closeModal={closeExpenseBillModals}
+                    bill={billData[0]}
+                    currentPhone={getCurrentPhone()}
                 />
-            </Modal> */}
+            </Modal>
             
         </View>
       </ScrollView>

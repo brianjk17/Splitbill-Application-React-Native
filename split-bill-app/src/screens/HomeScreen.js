@@ -1,9 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useEffect, useState } from "react"
-import { View,Text, StyleSheet } from "react-native"
+import { View,Text, StyleSheet, TouchableOpacity } from "react-native"
 import { supabase } from "../../supabase-service"
+import { useIsFocused } from "@react-navigation/native"
 
-export default function HomeScreen(){
+export default function HomeScreen({navigation}){
   
   const [currentName, setCurrentName] = useState('')
   const [currentPhone, setCurrentPhone] = useState('second')
@@ -61,6 +62,8 @@ export default function HomeScreen(){
     }
   }
 
+  const isFocused = useIsFocused();
+
   useEffect(()=>{
     getData()
     getBillData()
@@ -73,12 +76,20 @@ export default function HomeScreen(){
     getBillData()
   },[bills])
 
+  useEffect(()=>{
+    getBillData()
+  },[isFocused])
+
+  
   return (
     <View style={styles.container}>
       <Text style={styles.greeting}>Hello, {currentName}!</Text>
-      <View style={styles.infoContainer}>
+      <TouchableOpacity 
+        style={styles.infoContainer}
+        onPress={() => navigation.navigate('Bills')}
+      >
         <Text style={styles.infoText}>You have {activeBills} active bills</Text>
-      </View>
+      </TouchableOpacity>
       {/* <View style={styles.infoContainer}>
         <Text style={styles.infoText}>You owe: ${amountOwed}</Text>
       </View>

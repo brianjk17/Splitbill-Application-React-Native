@@ -8,6 +8,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import BillModal from "../components/ReadBill/BillModal";
 import SwitchSelector from "react-native-switch-selector";
 import { SearchBar } from 'react-native-elements';
+import { useIsFocused } from "@react-navigation/native";
 
 
 export default function BillScreen(){
@@ -96,6 +97,13 @@ export default function BillScreen(){
       console.log('Error storing login status: ', error);
     }
   }
+
+  const isFocused = useIsFocused();
+
+  useEffect(()=>{
+    getCurrentUserData()
+    getBillData()
+  },[isFocused])
 
   useEffect(()=>{
     //For all the bills of that users

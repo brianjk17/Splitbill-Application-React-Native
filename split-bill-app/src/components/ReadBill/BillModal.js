@@ -44,7 +44,9 @@ const Card = ({ cardNumber, phoneNumber, items, billItem }) => {
 
 
 const BillModal = ({closeModal, bill, currentPhone}) => {
-  // console.log(bill)
+  console.log("BillModal")
+  console.log(bill)
+  console.log(bill.expenses)
   function getNameFromPhone(phoneNum){
     let memberName
     bill.members.forEach((member) => {
@@ -242,6 +244,10 @@ const BillModal = ({closeModal, bill, currentPhone}) => {
   // }
 
   function getDate(timestamp){
+    if(timestamp.length<12){
+      return timestamp
+    }
+
     const date = new Date(timestamp);
 
     // Extracting date components

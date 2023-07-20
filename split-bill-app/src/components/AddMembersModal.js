@@ -125,17 +125,24 @@ export default function AddMembersModal({ nonUserId,
             <View>
                 <View className="flex-row justify-start">
                     <TouchableOpacity
-                        className="bg-yellow-400 p-2 rounded-tr-2xl rounded-bl-2xl ml-4"
+                        className="bg-yellow-400 "
+                        style={{width: 60,
+                            height: 60,
+                            borderRadius: 50, // Set the borderRadius to half the width and height to make it circular
+                            // backgroundColor: 'lightblue',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
                         onPress={()=>confirmGoBack()}
                     >
                         <Text>Back</Text>
                     </TouchableOpacity>
                 </View>
-                <Text>AddMembersModal</Text>
+                {/* <Text>AddMembersModal</Text> */}
                 <SwitchSelectorButton changetype={toggletypeofAdd}/>
                 {typeofAdd===  'contacts'? (
                     <View>
-                        <Text>contacts</Text>
+                        {/* <Text>contacts</Text> */}
                         <SafeAreaView>
                             {/* <FlatList
                                 data={users}
@@ -186,7 +193,7 @@ export default function AddMembersModal({ nonUserId,
                     
                 ):(
                     <View style={{ flex: 1 }}>
-                                <Text>non user</Text>
+                                {/* <Text>non user</Text> */}
 
                                 <AddNonUserComponent
                                     nonUser={nonUser}

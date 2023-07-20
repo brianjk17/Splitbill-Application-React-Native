@@ -311,7 +311,7 @@ export default ContactCard = ({setIsLoading, loading}) => {
   return (
             <View >
                 <SafeAreaView>
-                  {contacts.length===0 ?(<Text>No Bills</Text>)://change to displayBills
+                  {contacts.length===0 ?(<Text></Text>):
                   (<View style={{}}>
                     <SearchBar
                       lightTheme
