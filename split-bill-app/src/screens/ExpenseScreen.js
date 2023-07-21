@@ -923,13 +923,13 @@ export default function ExpenseScreen({toggleExpenseModal}){
         }
       }
       
-      console.log(billName)
-      console.log(selectedUsers)
-      console.log(expenses)
-      console.log(billOwner)
-      console.log(check(taxValue))
-      console.log(check(serviceValue))
-      console.log(check(discountsValue))
+      // console.log(billName)
+      // console.log(selectedUsers)
+      // console.log(expenses)
+      // console.log(billOwner)
+      // console.log(check(taxValue))
+      // console.log(check(serviceValue))
+      // console.log(check(discountsValue))
 
       async function addintoDB(){
         JSON.stringify(expenses)
@@ -949,9 +949,7 @@ export default function ExpenseScreen({toggleExpenseModal}){
 
         if (error) {
             //error will throw here
-            console.log("erererereor")
-            console.log(error)
-            // throw error;
+            console.log("error:",error)
             alert("Failed to add Bill, please try again")
         }else{
             console.log("Bill added")

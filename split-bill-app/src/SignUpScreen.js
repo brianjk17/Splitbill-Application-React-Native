@@ -7,6 +7,8 @@ import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../supabase-service';
 import { CheckBox } from 'react-native-elements';
 
+import {createHash, randomBytes, createCipheriv,createDecipheriv} from crypto
+
 export default function SignUpScreen() {
     const navigation = useNavigation();
     const [name, setName] = useState('');
@@ -16,10 +18,12 @@ export default function SignUpScreen() {
     const [showPassword, setShowPassword] = useState(false);
 
 
-    function reset(){setName('')
-    setPhone('')
-    setPassword('')
-    setConfpassword('')}
+    function reset(){
+        setName('')
+        setPhone('')
+        setPassword('')
+        setConfpassword('')
+    }
     // reset()
 
     // useEffect(()=>{
@@ -79,7 +83,7 @@ export default function SignUpScreen() {
             errors+="Name empty\n"
             console.log(errors)
         }
-        if (name===''||!await checkAvailabilityPhone() || !await checkPassword()) {
+        if (name===''|| !await checkAvailabilityPhone() || !await checkPassword()) {
             console.log("invalid input(s)")
             alert(errors)
             errors=""
@@ -89,7 +93,7 @@ export default function SignUpScreen() {
             name: name,
             // email: email,
             phone: phone,
-            password: password
+            password:password// encryptData(phone, password)
         })
         if (error) {
             //error will throw here
@@ -101,6 +105,21 @@ export default function SignUpScreen() {
             reset()
             navigation.navigate('Login')
         }
+    }
+
+    function encryptData(username, data) {
+        const algorithm = 'aes-256-cbc';
+        const key = crypto.createHash('sha256').update(username).digest();
+        const iv = crypto.randomBytes(16); // Initialization vector
+      
+        const cipher = crypto.createCipheriv(algorithm, key, iv);
+        let encrypted = cipher.update(data, 'utf8', 'hex');
+        encrypted += cipher.final('hex');
+      
+        return {
+          iv: iv.toString('hex'),
+          encryptedData: encrypted,
+        };
     }
     
     return (

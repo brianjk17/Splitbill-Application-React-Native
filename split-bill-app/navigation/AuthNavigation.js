@@ -15,16 +15,16 @@ const Stack = createNativeStackNavigator();
 
 
 export function AuthNavigation() {
-  // useEffect(() => {
-  //   const backHandler = BackHandler.addEventListener(
-  //     'hardwareBackPress',
-  //     () => {
-  //       return true; // Disable back button functionality
-  //     }
-  //   );
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        return true; // Disable back button functionality
+      }
+    );
 
-  //   return () => backHandler.remove();
-  // }, []);
+    return () => backHandler.remove();
+  }, []);
 
   return (
       <NavigationContainer>
