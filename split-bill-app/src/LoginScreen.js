@@ -10,6 +10,8 @@ import { useNavigation } from '@react-navigation/native'
 import { supabase } from '../supabase-service'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { CheckBox } from 'react-native-elements'
+import CryptoJS from 'react-native-crypto-js';
+
 
     //UPDATE
     // async function updatePassword() {
@@ -117,12 +119,16 @@ export default function LoginScreen() {
     }
   };
 
-  // WHEN LOG OUT
-  // remove isLoggedIn, user_id
+  function decrypt(message, key) {
+    const decryptedBytes = CryptoJS.AES.decrypt(message, key);
+    const decryptedMessage = decryptedBytes.toString(CryptoJS.enc.Utf8);
+    console.log(decryptedMessage)
+    console.log(decryptedMessage===password)
+    return decryptedMessage;
+  }
+
   async function userLogin() {
-    //PASSWORD SYMMETRIC CRYPTOGRAPHY
     if(phone=="" || password==""){
-      // navigation.navigate('Nav')                      //DELETE
       alert("Empty input(s) phone number or password")
       return
     }
@@ -132,25 +138,28 @@ export default function LoginScreen() {
         .from('User')
         .select()
         .eq('phone', phone)
-        .eq('password', password);
-  
+        // .eq('password', password);
+        // console.log(decrypt(data[0].password, phone))
       if (data[0] === undefined) {
         console.log(error);
-        alert('Incorrect phone number or password');
-      } else if (data?.length !== 0) {
+        alert('Phone Number not registered in the system');
+      } 
+      
+      else if ((data?.length !== 0)&&decrypt(data[0].password, phone)===password) {//(data?.length !== 0)
         setUser_id(data[0].user_id);
         setName(data[0].name);
   
-        console.log('data[0].user_id: ' + data[0].user_id);
-        console.log(user_id);
-        console.log(data[0]);
+        // console.log('data[0].user_id: ' + data[0].user_id);
+        // console.log(user_id);
+        // console.log(data[0]);
         console.log('Login success');
         storeLoginStatus(true, data[0].user_id, data[0].name, phone);
         console.log(user_id);
-        navigation.navigate('Nav') 
+        // navigation.navigate('Nav') 
       } else {
         console.log(error);
         console.log(phone, password);
+        alert('Incorrect password');
       }
     } catch (error) {
       console.log('Error storing login status: ', error);
@@ -163,6 +172,7 @@ export default function LoginScreen() {
   //   }
   // }, [user_id]);
   const [showPassword, setShowPassword] = useState(false);
+
 
   return (
     

@@ -6,8 +6,10 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useNavigation } from '@react-navigation/native';
 import { supabase } from '../supabase-service';
 import { CheckBox } from 'react-native-elements';
+import CryptoJS from 'react-native-crypto-js';
 
-import {createHash, randomBytes, createCipheriv,createDecipheriv} from crypto
+
+// import {createHash, randomBytes, createCipheriv,createDecipheriv} from crypto
 
 export default function SignUpScreen() {
     const navigation = useNavigation();
@@ -89,11 +91,12 @@ export default function SignUpScreen() {
             errors=""
             return;
         }
+        
         const { error } = await supabase.from("User").insert({
             name: name,
             // email: email,
             phone: phone,
-            password:password// encryptData(phone, password)
+            password:encrypt(password,phone)// password
         })
         if (error) {
             //error will throw here
@@ -107,20 +110,10 @@ export default function SignUpScreen() {
         }
     }
 
-    function encryptData(username, data) {
-        const algorithm = 'aes-256-cbc';
-        const key = crypto.createHash('sha256').update(username).digest();
-        const iv = crypto.randomBytes(16); // Initialization vector
-      
-        const cipher = crypto.createCipheriv(algorithm, key, iv);
-        let encrypted = cipher.update(data, 'utf8', 'hex');
-        encrypted += cipher.final('hex');
-      
-        return {
-          iv: iv.toString('hex'),
-          encryptedData: encrypted,
-        };
-    }
+    function encrypt(message, key) {
+        const encryptedMessage = CryptoJS.AES.encrypt(message, key).toString();
+        return encryptedMessage;
+      }
     
     return (
     <View className="flex-1 flex bg-white" style={{backgroundColor: '#171717'}}>

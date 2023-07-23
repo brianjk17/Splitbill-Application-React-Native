@@ -198,45 +198,61 @@
 // console.log('Decrypted Password:', decryptedPassword);
 // // console.log('Decrypted Username:', decryptedUsername);
 
-const crypto = require('crypto');
+// const crypto = require('crypto');
 
-// Encrypt data using the username as the key
-function encryptData(username, data) {
-  const algorithm = 'aes-256-cbc';
-  const key = crypto.createHash('sha256').update(username).digest();
-  const iv = crypto.randomBytes(16); // Initialization vector
+// // Encrypt data using the username as the key
+// function encryptData(username, data) {
+//   const algorithm = 'aes-256-cbc';
+//   const key = crypto.createHash('sha256').update(username).digest();
+//   const iv = crypto.randomBytes(16); // Initialization vector
 
-  const cipher = crypto.createCipheriv(algorithm, key, iv);
-  let encrypted = cipher.update(data, 'utf8', 'hex');
-  encrypted += cipher.final('hex');
+//   const cipher = crypto.createCipheriv(algorithm, key, iv);
+//   let encrypted = cipher.update(data, 'utf8', 'hex');
+//   encrypted += cipher.final('hex');
 
-  return {
-    iv: iv.toString('hex'),
-    encryptedData: encrypted,
-  };
+//   return {
+//     iv: iv.toString('hex'),
+//     encryptedData: encrypted,
+//   };
+// }
+
+// // Decrypt data using the username as the key
+// function decryptData(username, encryptedData, iv) {
+//   const algorithm = 'aes-256-cbc';
+//   const key = crypto.createHash('sha256').update(username).digest();
+//   const decipher = crypto.createDecipheriv(algorithm, key, Buffer.from(iv, 'hex'));
+
+//   let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
+//   decrypted += decipher.final('utf8');
+
+//   return decrypted;
+// }
+
+// // Example usage:
+// const username = 'exampleUser';
+// const originalData = '123123123';
+
+// const encryptedData = encryptData(username, originalData);
+// console.log('Encrypted data:', encryptedData);
+// a={
+//   iv: '21209dddd6603f4276d8796723101a3f',
+//   encryptedData: '71d2fe928bc51de07b7143c13984ef8a'
+// }
+// const decryptedData = decryptData(username, a.encryptedData, a.iv);
+// console.log('Decrypted data:', decryptedData);
+
+const CryptoJS = require("crypto-js");
+
+export function encrypt(message = '', key = ''){
+  var message = CryptoJS.AES.encrypt(message, key);
+  return message.toString();
 }
+export function decrypt(message = '', key = ''){
+  var code = CryptoJS.AES.decrypt(message, key);
+  var decryptedMessage = code.toString(CryptoJS.enc.Utf8);
 
-// Decrypt data using the username as the key
-function decryptData(username, encryptedData, iv) {
-  const algorithm = 'aes-256-cbc';
-  const key = crypto.createHash('sha256').update(username).digest();
-  const decipher = crypto.createDecipheriv(algorithm, key, Buffer.from(iv, 'hex'));
-
-  let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
-  decrypted += decipher.final('utf8');
-
-  return decrypted;
+  return decryptedMessage;
 }
+console.log(encrypt('anjing','123123'));
 
-// Example usage:
-const username = 'exampleUser';
-const originalData = '123123123';
-
-const encryptedData = encryptData(username, originalData);
-console.log('Encrypted data:', encryptedData);
-a={
-  iv: '21209dddd6603f4276d8796723101a3f',
-  encryptedData: '71d2fe928bc51de07b7143c13984ef8a'
-}
-const decryptedData = decryptData(username, a.encryptedData, a.iv);
-console.log('Decrypted data:', decryptedData);
+console.log(decrypt('U2FsdGVkX19K77itIFmqmAw4XGmsIpohrCtFdUEhAkk=','123123'))

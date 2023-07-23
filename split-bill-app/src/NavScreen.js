@@ -11,6 +11,7 @@ import BillScreen from './screens/BillScreen'
 import ExpenseScreen from './screens/ExpenseScreen'
 import ContactScreen from './screens/ContactScreen'
 import LogoutScreen from './LogoutScreen'
+// import TestScreen from './screens/testScreen'
 import { Text, View } from 'react-native'
 
 
