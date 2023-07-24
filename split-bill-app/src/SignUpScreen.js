@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, TextInput } from 'react-native'
+import { View, Text, TouchableOpacity, Image, TextInput, KeyboardAvoidingView, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 // import { themeColors } from '../theme'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -85,24 +85,23 @@ export default function SignUpScreen() {
             errors+="Name empty\n"
             console.log(errors)
         }
+        
         if (name===''|| !await checkAvailabilityPhone() || !await checkPassword()) {
             console.log("invalid input(s)")
             alert(errors)
             errors=""
             return;
         }
-        
+
         const { error } = await supabase.from("User").insert({
             name: name,
-            // email: email,
             phone: phone,
             password:encrypt(password,phone)// password
         })
+        
         if (error) {
-            //error will throw here
             console.log("erererereor")
             console.log(error)
-            // throw error;
         }else{
             console.log("user added")
             reset()
@@ -110,12 +109,15 @@ export default function SignUpScreen() {
         }
     }
 
-    function encrypt(message, key) {
-        const encryptedMessage = CryptoJS.AES.encrypt(message, key).toString();
+    function encrypt(password, key) {
+        const encryptedMessage = CryptoJS.AES.encrypt(password, key).toString();
         return encryptedMessage;
-      }
-    
+    }
+
     return (
+    <KeyboardAvoidingView behavior="none" style={{ flex: 1 }}>
+
+    <ScrollView className="flex-1 bg-stone-300" >
     <View className="flex-1 flex bg-white" style={{backgroundColor: '#171717'}}>
         
       <SafeAreaView className="flex">
@@ -215,7 +217,7 @@ export default function SignUpScreen() {
                     className="w-10 h-10" />
             </TouchableOpacity>
         </View> */}
-        <View className="flex-row justify-center mt-7">
+        <View className="flex-row justify-center mt-7 mb-10">
             <Text className="text-gray-500 font-semibold">Already have an account?</Text>
             <TouchableOpacity onPress={()=> {
                 reset()
@@ -225,5 +227,7 @@ export default function SignUpScreen() {
         </View>
       </View>
     </View>
+    </ScrollView>
+    </KeyboardAvoidingView>
   )
 }

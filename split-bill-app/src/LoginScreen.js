@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Image, TextInput } from 'react-native'
+import { View, Text, TouchableOpacity, Image, TextInput, KeyboardAvoidingView, ScrollView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -119,12 +119,10 @@ export default function LoginScreen() {
     }
   };
 
-  function decrypt(message, key) {
-    const decryptedBytes = CryptoJS.AES.decrypt(message, key);
-    const decryptedMessage = decryptedBytes.toString(CryptoJS.enc.Utf8);
-    console.log(decryptedMessage)
-    console.log(decryptedMessage===password)
-    return decryptedMessage;
+  function decrypt(password, key) {
+    const decryptedBytes = CryptoJS.AES.decrypt(password, key);
+    const decryptedPassword = decryptedBytes.toString(CryptoJS.enc.Utf8);
+    return decryptedPassword;
   }
 
   async function userLogin() {
@@ -138,24 +136,17 @@ export default function LoginScreen() {
         .from('User')
         .select()
         .eq('phone', phone)
-        // .eq('password', password);
-        // console.log(decrypt(data[0].password, phone))
       if (data[0] === undefined) {
         console.log(error);
         alert('Phone Number not registered in the system');
       } 
       
-      else if ((data?.length !== 0)&&decrypt(data[0].password, phone)===password) {//(data?.length !== 0)
+      else if ((data?.length !== 0)&&decrypt(data[0].password, phone)===password) { //(data?.length !== 0)
         setUser_id(data[0].user_id);
         setName(data[0].name);
-  
-        // console.log('data[0].user_id: ' + data[0].user_id);
-        // console.log(user_id);
-        // console.log(data[0]);
         console.log('Login success');
         storeLoginStatus(true, data[0].user_id, data[0].name, phone);
-        console.log(user_id);
-        // navigation.navigate('Nav') 
+        console.log(user_id);                                                       // navigation.navigate('Nav') 
       } else {
         console.log(error);
         console.log(phone, password);
@@ -175,7 +166,9 @@ export default function LoginScreen() {
 
 
   return (
-    
+    <KeyboardAvoidingView behavior="none" style={{ flex: 1 }}>
+
+    <ScrollView className="flex-1 bg-stone-300" >
     <View className="flex-1 flex bg-zinc-100" style={{backgroundColor: '#171717'}}>
       <SafeAreaView  className="flex ">
         
@@ -192,7 +185,7 @@ export default function LoginScreen() {
 
         <View  className="flex-row justify-center">
           <Image source={require('../assets/moreimages/login.png')} 
-          style={{width: 200, height: 200}} />
+          style={{width: 280, height: 200}} />
         </View>
       </SafeAreaView>
 
@@ -255,7 +248,7 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View> */}
 
-          <View className="flex-row justify-center mt-5">
+          <View className="flex-row justify-center mt-5 mb-10">
               <Text className="text-gray-500 font-semibold">
                   Don't have an account?
               </Text>
@@ -269,5 +262,8 @@ export default function LoginScreen() {
           </View>
       </View>
     </View>
+    </ScrollView>
+    </KeyboardAvoidingView>
   )
+  
 }

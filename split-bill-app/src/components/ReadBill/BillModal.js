@@ -94,6 +94,7 @@ const BillModal = ({closeModal, bill, currentPhone}) => {
   // Group the data by phone number
   // console.log("bill")
   // console.log(bill)
+  
   const groupedData = bill.expenses.reduce((result, item) => {
     item.members.forEach((member) => {
       if (!result[member]) {
